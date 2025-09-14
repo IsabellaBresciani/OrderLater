@@ -59,7 +59,7 @@ npm run dev
 1. Petosa Ayala Franco
 2. Bresciani Isabella
 3. Eliseche Martin
-4. Pietratuono Franco
+4. Pietrantuono Franco
 
 ## Profesores
 1. Ing Sitnyk Martin
