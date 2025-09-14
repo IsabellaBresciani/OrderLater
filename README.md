@@ -1,4 +1,4 @@
-# 🐾 Order Later
+# Order Later
 
 | <h1>UTN-FRLP</h1> | <img src="./logo.png" alt="Logo del Proyecto" width="100"> |
 |-------------------|----------------------------------|
@@ -61,3 +61,6 @@ npm run dev
 3. Eliseche Martin
 4. Pietratuono Franco
 
+## Profesores
+1. Ing Sitnyk Martin
+2. Ing Watemberg Emilio
