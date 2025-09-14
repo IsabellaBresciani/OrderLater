@@ -29,20 +29,35 @@ Antes de comenzar, asegúrate de tener instalado:
 
 ```bash
 git clone <url-del-repositorio>
-cd find_my_friend
 ```
 
 ### 2. Instalar dependencias
 
 ```bash
+cd OrdersLater/frontend
+npm install
+```
+
+```bash
+cd OrdersLater/backend
 npm install
 ```
 
 ### 3. Ejecutar el proyecto en modo desarrollo
 
 ```bash
+cd OrdersLater/frontend
 npm run dev
 ```
 
-La aplicación se abrirá automáticamente en tu navegador en `http://localhost:3000`
+```bash
+cd OrdersLater/backend
+npm run dev
+```
+
+## Integrantes
+1. Petosa Ayala Franco
+2. Bresciani Isabella
+3. Eliseche Martin
+4. Pietratuono Franco
 
