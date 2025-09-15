@@ -23,38 +23,6 @@ Antes de comenzar, asegúrate de tener instalado:
 2. Descarga la versión LTS (Long Term Support)
 3. Sigue las instrucciones de instalación para tu sistema operativo
 
-## 🚀 Instalación y Configuración
-
-### 1. Clonar el repositorio
-
-```bash
-git clone <url-del-repositorio>
-```
-
-### 2. Instalar dependencias
-
-```bash
-cd OrdersLater/frontend
-npm install
-```
-
-```bash
-cd OrdersLater/backend
-npm install
-```
-
-### 3. Ejecutar el proyecto en modo desarrollo
-
-```bash
-cd OrdersLater/frontend
-npm run dev
-```
-
-```bash
-cd OrdersLater/backend
-npm run dev
-```
-
 ## Integrantes
 1. Petosa Ayala Franco
 2. Bresciani Isabella
