@@ -2,16 +2,12 @@ const  User  = require('../models/User.js');
 
 class UserDAO {
 
-    findUserByEmail = (email) => User.findOne({ where: { email }, attributes: ['id', 'email', 'password', 'first_name', 'last_name'] });
+    async findUserByEmail(email) {
+        return await User.findOne({ email }).select('id email password first_name last_name');
+    }
 
-    createUser = (user) => {
-        const { email, password, first_name,  last_name } = user;
-        return User.create({
-            email,
-            password,
-            first_name, 
-            last_name
-        });
+    async createUser(user) {
+        return await User.create(user);
     }
 }
 
