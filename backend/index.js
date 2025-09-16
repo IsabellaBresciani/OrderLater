@@ -12,6 +12,7 @@ const app = express();
 
 //--------------------------------  Middleware  --------------------------------
 const cookieParser = require('cookie-parser');
+const asyncHandler = require('./src/handlers/asyncHandler');
 
 //--------------------------------  Midelware  ---------------------------
 app.use(bodyParser.json());
@@ -23,7 +24,6 @@ app.use(cookieParser());
 // Rutas que no requieren autenticación
 app.use('/api/auth', authRoutes);
 app.use('/api/checkhealth', checkHealthRoutes);
-
 
 //--------------------------------  Global Error Handler  -----------------------
 app.use((error, request, response, next) => {

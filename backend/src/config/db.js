@@ -17,5 +17,3 @@ const mongoose = require("mongoose");
     process.exit(1);
   }
 })();
-
-module.exports = connectDB;
