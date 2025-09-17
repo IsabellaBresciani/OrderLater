@@ -9,14 +9,16 @@ class OrderController {
     }
         
     createOrder = async (request, response) => {
+        
+        const dto = request.body;
+        const order = await this.orderService.createOrder(dto)
 
         return response
-        .status(200)
+        .status(201)
         .json({ 
             status: 'Success',
-            message: 'User successfully login',
-            authToken: authToken, 
-            currentUser: currentUser
+            message: 'Order successfully created',
+            data: { order_id: order._id }
         });
     };
 }

@@ -6,6 +6,7 @@ const cors = require('cors');
 const checkHealthRoutes = require('./src/routes/checkHealth');
 const authRoutes = require('./src/routes/authRoutes');
 const productRoutes = require('./src/routes/productRoutes');
+const orderRoutes = require('./src/routes/orderRoutes');
 
 
 //--------------------------------  App  --------------------------------
@@ -26,6 +27,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/checkhealth', checkHealthRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes);
 
 //--------------------------------  Global Error Handler  -----------------------
 app.use((error, request, response, next) => {
