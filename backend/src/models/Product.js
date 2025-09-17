@@ -31,7 +31,14 @@ const productSchema = new mongoose.Schema({
     measure: {
         type: String,
         enum: ['kg', 'unit', 'liter'],
-    }
+    },
+
+    // Relationships
+    shop: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Shop',
+        required: true,
+    },
 }, {
     timestamps: true,
 });
