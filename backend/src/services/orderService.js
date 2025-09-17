@@ -12,7 +12,7 @@ class OrderService {
     }
 
     createOrder = async (data) => {
-    
+        
         if (!data.user_id) new NotFoundException('User not found');
         if (!data.commerce_id) new NotFoundException('Commerce not found');
 
@@ -38,7 +38,15 @@ class OrderService {
         newOrder.commerce = data.commerce_id;
         newOrder.deliver_date = data.deliver_date;
 
-        const templateSource = fs.readFileSync('src/templates/email/new_order_template.html', 'utf8');
+        const createdOrder = await orderDAO.createOrder(newOrder);
+
+        this.notifyCreatedOrderToUser(createdOrder);
+        
+        return createdOrder;
+    };
+
+    async notifyCreatedOrderToUser(order) {
+        const templateSource = fs.readFileSync('src/templates/email/created_order_template.html', 'utf8');
         const template = handlebars.compile(templateSource);
 
         const emailData = {
@@ -56,9 +64,7 @@ class OrderService {
             subject: "Nueva Orden Creada",
             body: htmlBody
         });
-        
-        return orderDAO.createOrder(newOrder);
-    };
+    }
 }
 
 function calculateSubtotal(unit_price, quantity, discount=0, advance_in_days=0, deliver_date) {
