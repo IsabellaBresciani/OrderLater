@@ -6,11 +6,7 @@ const { stringify } = require('yamljs');
 require('dotenv').config();
 
 class AuthService {
-
-    async sendEmail(email, confirmationCode){
-
-    }
-
+    
     async getUser(email, inputPassword){
         const user = await userDao.findUserByEmail(email);
         if (!user) throw new BadRequestException('Invalid Credentials');
