@@ -40,7 +40,7 @@ class OrderService {
 
         const createdOrder = await orderDAO.createOrder(newOrder);
 
-        this.notifyCreatedOrderToUser(createdOrder);
+        this.notifyCreatedOrderToUser(newOrder);
         
         return createdOrder;
     };
@@ -50,10 +50,10 @@ class OrderService {
         const template = handlebars.compile(templateSource);
 
         const emailData = {
-            userName: data.user_name || 'Usuario',
-            products: newOrder.items,
-            total: newOrder.total.toFixed(2),
-            deliverDate: newOrder.deliver_date,
+            userName: order.user_name || 'Usuario',
+            products: order.items,
+            total: order.total.toFixed(2),
+            deliverDate: order.deliver_date,
             year: new Date().getFullYear()
         };
 
