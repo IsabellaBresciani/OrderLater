@@ -1,36 +1,39 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
+    sku: {
+        type: String,
+        maxlength: 12,
+    },
     name: {
         type: String,
         required: true,
-        maxlength: 20,
+        maxlength: 40,
     },
     description: {
         type: String,
         required: true,
-        maxlength: 20,
+        maxlength: 255,
     },
-    url_imagen: {
+    image_url: {
         type: String,
-        required: true
+        match: /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i,
     },
-    category: {
-        type: String,
-        required: true,
-        maxlength: 20,
+    unit_price: {
+        type: Number,
     },
     discount: {
-        type: Number
+        type: Number,
     },
-    minimum_notice: {
-        type: Number
+    advance_in_days: {
+        type: Number,
     },
-    price: {
-        type: float,
+    measure: {
+        type: String,
+        enum: ['kg', 'unit', 'liter'],
     }
 }, {
-    timestamps: true
+    timestamps: true,
 });
 
 module.exports = mongoose.model('Product', productSchema);
