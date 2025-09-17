@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const checkHealthRoutes = require('./src/routes/checkHealth');
 const authRoutes = require('./src/routes/authRoutes');
+const productRoutes = require('./src/routes/productRoutes');
 
 
 //--------------------------------  App  --------------------------------
@@ -24,6 +25,7 @@ app.use(cookieParser());
 // Rutas que no requieren autenticación
 app.use('/api/auth', authRoutes);
 app.use('/api/checkhealth', checkHealthRoutes);
+app.use('/api/products', productRoutes);
 
 //--------------------------------  Global Error Handler  -----------------------
 app.use((error, request, response, next) => {
