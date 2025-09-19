@@ -15,7 +15,6 @@ class ProductService {
         return products;
     }
 
-
     async getProductById(id) {
         const product = await productDao.findProductById(id);
 
@@ -24,7 +23,6 @@ class ProductService {
         return product;
     }
 
-
     async getProductBySku(sku) {
         const product = await productDao.findProductBySku(sku);
 
@@ -32,7 +30,6 @@ class ProductService {
 
         return product;
     }
-
 
     async createProduct(data) {
         const {
@@ -66,7 +63,6 @@ class ProductService {
 
         return productDao.createProduct(newProduct);
     }
-
 
     async updateProduct(id, data) {
         const {
