@@ -1,10 +1,6 @@
 const mongoose = require('mongoose');
 
-const productSchema = new mongoose.Schema({
-    sku: {
-        type: String,
-        maxlength: 12,
-    },
+const shopSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -15,32 +11,26 @@ const productSchema = new mongoose.Schema({
         required: true,
         maxlength: 255,
     },
-    image_url: {
+    logo_image_url: {
         type: String,
         match: /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i,
     },
-    unit_price: {
-        type: Number,
-    },
-    discount: {
-        type: Number,
-    },
-    advance_in_days: {
-        type: Number,
-    },
-    measure: {
+    adress: {
         type: String,
-        enum: ['kg', 'unit', 'liter'],
     },
 
     // Relationships
-    shop: {
+    owner: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Shop',
+        ref: 'User',
         required: true,
     },
+    products: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+    }],
 }, {
     timestamps: true,
 });
 
-module.exports = mongoose.model('Product', productSchema);
+module.exports = mongoose.model('Shop', shopSchema);
