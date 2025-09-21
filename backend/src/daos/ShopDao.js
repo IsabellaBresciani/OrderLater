@@ -14,8 +14,8 @@ class ShopDAO {
         return await Shop.find();
     }
 
-    async createShop(Shop) {
-        return await Shop.create(Shop);
+    async createShop(shopdata) {
+        return await Shop.create(shopdata);
     }
 
     async updateShop(id, updateData) {
