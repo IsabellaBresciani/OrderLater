@@ -9,7 +9,7 @@ const cardStyle = {
   boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)',
 };
 
-const ProductDetailOrder = ({ product, onCancel, onAdded }) => {
+const ProductDetailOrder = ({ product, userId, onCancel, onAdded }) => {
   const [quantity, setQuantity] = useState(1);
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
@@ -24,7 +24,7 @@ const ProductDetailOrder = ({ product, onCancel, onAdded }) => {
 
     setError("");
 
-    // 🔹 Guardar en localStorage con OrderManager
+    // Guardar en localStorage con OrderManager
     OrderManager.addProductToOrder({
       id: product.id,
       sku: product.sku,
@@ -32,6 +32,7 @@ const ProductDetailOrder = ({ product, onCancel, onAdded }) => {
       price: product.unit_price,
       quantity: Number(quantity),
       clarification: note,
+      user_id: userId 
     });
 
     if (onAdded) onAdded();
