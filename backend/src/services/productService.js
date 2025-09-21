@@ -36,29 +36,36 @@ class ProductService {
             sku,
             name,
             description,
-            image_url_char,
+            image_url,
             unit_price,
             discount,
             advance_in_days,
-            measure
+            measure,
+            shop
         } = data;
 
-        if (!sku || !name || !description || !image_url_char || !unit_price || !discount || !advance_in_days || !measure) 
+        if (!sku || !name || !description || !image_url || 
+            unit_price === undefined || unit_price === null ||
+            discount === undefined || discount === null ||
+            advance_in_days === undefined || advance_in_days === null ||
+            !measure || !shop) {
             throw new BadRequestException('All fields are required');
+        }
 
         const productExist = await productDao.findProductBySku(sku);
 
-        if (productExist) throw ConflictException('Already exist product with SKU');
+        if (productExist) throw new ConflictException('Already exist product with SKU');
 
         const newProduct = { 
-            sku: sku, 
-            name: name,
-            description: description,
-            image_url_char: image_url_char,
-            unit_price: unit_price,
-            discount: discount,
-            advance_in_days: advance_in_days,
-            measure: measure
+            sku, 
+            name,
+            description,
+            image_url,
+            unit_price,
+            discount,
+            advance_in_days,
+            measure,
+            shop
         };
 
         return productDao.createProduct(newProduct);
@@ -69,17 +76,23 @@ class ProductService {
             sku,
             name,
             description,
-            image_url_char,
+            image_url,
             unit_price,
             discount,
             advance_in_days,
-            measure
+            measure,
+            shop
         } = data;
 
         if (!id) throw new BadRequestException('Product ID is required');
 
-        if (!sku || !name || !description || !image_url_char || !unit_price || !discount || !advance_in_days || !measure) 
+        if (!sku || !name || !description || !image_url || 
+            unit_price === undefined || unit_price === null ||
+            discount === undefined || discount === null ||
+            advance_in_days === undefined || advance_in_days === null ||
+            !measure || !shop) {
             throw new BadRequestException('All fields are required');
+        }
 
         const product = await productDao.findProductById(id);
 
@@ -87,21 +100,20 @@ class ProductService {
 
         const productSku = await productDao.findProductBySku(sku);
 
-        let existAnotherProductWithSku = false; 
-        
-        if (productSku && product !== productSku) existAnotherProductWithSku = true;
+        if (productSku && product._id.toString() !== productSku._id.toString()) {
+            throw new ConflictException('Another product with this SKU already exists');
+        }
 
-        if (existAnotherProductWithSku) throw new ConflictException('Another product with this SKU already exists');
-
-         const updateData = { 
-            sku: sku, 
-            name: name,
-            description: description,
-            image_url_char: image_url_char,
-            unit_price: unit_price,
-            discount: discount,
-            advance_in_days: advance_in_days,
-            measure: measure
+        const updateData = { 
+            sku, 
+            name,
+            description,
+            image_url,
+            unit_price,
+            discount,
+            advance_in_days,
+            measure,
+            shop
         };
 
         return productDao.updateProduct(id, updateData);
