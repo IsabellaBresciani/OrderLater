@@ -45,7 +45,7 @@ const priceStyle = {
 
 const ProductCard = ({ product }) => {
   return (
-    <div className="col-md-3 mb-4 text-center border-2 rounded-3 p-2">
+    <div className="mb-4 text-center border-2 rounded-3 p-2">
       <Link to={`/shops/${product.shop}/products/${product._id}`} className="text-decoration-none">
         <div style={cardStyle}>
           <img src={product.image_url} alt={product.name} style={imageStyle} />
