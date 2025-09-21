@@ -35,7 +35,7 @@ class OrderService {
         newOrder.user = data.user_id;
         newOrder.items = order_items;
         newOrder.total = total_price;
-        newOrder.commerce = data.commerce_id;
+        newOrder.shop = data.shop_id;
         newOrder.deliver_date = data.deliver_date;
 
         const createdOrder = await orderDAO.createOrder(newOrder);
