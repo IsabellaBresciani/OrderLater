@@ -16,9 +16,14 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/auth" element={<PublicRoute> <Auth /> </PublicRoute>} />
-          <Route path="/health" element={<PublicRoute> <HealthCheck /> </PublicRoute>} />
-          <Route path="/" element={<PrivateRoute> <Home /> </PrivateRoute>} />
+          {/* Rutas Públicas */}
+          <Route path="/auth" element={<PublicRoute><Auth /></PublicRoute>} />
+          <Route path="/health" element={<PublicRoute><HealthCheck /></PublicRoute>} />
+          
+          {/* Rutas Privadas */}
+          <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
+          <Route path="/shops/:shopId/products" element={<PrivateRoute><ShopProducts /></PrivateRoute>} />
+          <Route path="/shops/:shopId/products/:productId" element={<PrivateRoute><ProductDetailPage /></PrivateRoute>} />
         </Routes>
       </Router>
     </AuthProvider>
