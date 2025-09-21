@@ -12,7 +12,7 @@ import AuthProvider from './context/AuthContext.jsx';
 import Home from './pages/Home.jsx';
 import ShopProducts from './pages/shops/ShopProducts.jsx';
 import ProductDetailPage from './pages/products/ProductDetailPage.jsx';
-
+import OrderCheckout from './pages/orders/OrderCheckout.jsx';
 
 function App() {
   return (
@@ -26,6 +26,7 @@ function App() {
           {/* Rutas Privadas */}
           <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
           <Route path="/shops/:shopId/products" element={<PrivateRoute><ShopProducts /></PrivateRoute>} />
+          <Route path="/order-checkout" element={<PrivateRoute><OrderCheckout /></PrivateRoute>} />
           <Route path="/shops/:shopId/products/:productId" element={<PrivateRoute><ProductDetailPage /></PrivateRoute>} />
         </Routes>
       </Router>

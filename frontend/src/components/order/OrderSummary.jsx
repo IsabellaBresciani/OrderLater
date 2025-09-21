@@ -1,20 +1,22 @@
 import React from 'react';
-import OrderItem from './OrderItem.jsx';
+import OrderItemReduced from './OrderItemReduced.jsx';
+import OrderItem from './OrderItem.jsx'; 
 
-function OrderSummary({ items, onDelete, onQuantityChange }) {
+function OrderSummary({ items, onDelete, onQuantityChange, isReduced = true }) {
+  // Determine which component to render based on the isReduced prop
+  const OrderItemComponent = isReduced ? OrderItemReduced : OrderItem;
+
   return (
-    <table style={{ width: '100%', marginBottom: '1rem' }}>
-      <tbody>
-        {items.map(item => (
-          <OrderItem
-            key={item._id || item.id || item.sku}
-            item={item}
-            onDelete={onDelete}
-            onQuantityChange={onQuantityChange}
-          />
-        ))}
-      </tbody>
-    </table>
+    <div style={{ width: '100%', marginBottom: '1rem' }}>
+      {items.map(item => (
+        <OrderItemComponent
+          key={item._id || item.id || item.sku}
+          item={item}
+          onDelete={onDelete}
+          onQuantityChange={onQuantityChange}
+        />
+      ))}
+    </div>
   );
 }
 
