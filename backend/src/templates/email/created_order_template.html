@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Orden Creada</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f4f8fb;
+      color: #222;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      background: #fff;
+      padding: 32px 24px;
+      border-radius: 12px;
+      max-width: 520px;
+      margin: 40px auto;
+      box-shadow: 0 4px 16px rgba(44, 130, 201, 0.08);
+      text-align: center;
+    }
+    .logo {
+      max-width: 160px;
+      margin-bottom: 20px;
+    }
+    h2 {
+      color: #2d7cff;
+      margin-bottom: 12px;
+      font-size: 1.7em;
+    }
+    .greeting {
+      color: #222;
+      font-size: 1.1em;
+      margin-bottom: 18px;
+      text-align: left;
+    }
+    .products-list {
+      background: #f0f6ff;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 18px;
+      list-style: none;
+      text-align: left;
+    }
+    .products-list li {
+      padding: 20px 0;
+      border-bottom: 1px solid #e3eaf3;
+      font-size: 1em;
+    }
+    .products-list li:last-child {
+      border-bottom: none;
+    }
+    .total {
+      font-size: 1.2em;
+      color: #1a6ed8;
+      margin-bottom: 10px;
+      font-weight: bold;
+      text-align: left;
+    }
+    .date {
+      font-size: 1em;
+      color: #555;
+      margin-bottom: 18px;
+      text-align: left;
+    }
+    .help {
+      font-size: 1em;
+      color: #444;
+      margin-bottom: 18px;
+      text-align: left;
+    }
+    .footer {
+      margin-top: 32px;
+      font-size: 13px;
+      color: #aaa;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img class="logo" src="https://res.cloudinary.com/dw9e57leg/image/upload/v1758463452/orders-later/order-later-logo_vm7kne.png" alt="Order Later">
+    <h2>¡Tu orden ha sido creada exitosamente!</h2>
+    <div class="greeting">Hola <strong>{{userName}}</strong>,</div>
+    <div class="help">Gracias por tu compra. Estos son los productos que ordenaste:</div>
+    <ul class="products-list">
+      {{#each products}}
+        <li style="color:#222">
+          {{this.name}} 
+          <span style="color:#2d7cff;">x {{this.quantity}}</span>  
+          {{#if this.discount}}
+            <span style="float:right; text-decoration: line-through; color:#888;">
+              ${{this.subtotalBeforeDiscount}}
+            </span>
+            <br>
+            <span style="float:right; font-weight:bold; color:#28a745;">
+              ${{this.subtotal}}
+            </span>
+          {{else}}
+            <span style="float:right; font-weight:bold;">
+              ${{this.subtotal}}
+            </span>
+          {{/if}}
+        </li>
+      {{/each}}
+    </ul>
+    <div class="total">Total: ${{total}}</div>
+    <div class="date">Fecha de entrega estimada: <strong>{{deliverDate}}</strong></div>
+    <div class="help">Si tienes alguna duda, responde a este correo.</div>
+    <div class="footer">
+      &copy; {{year}} OrderLater
+    </div>
+  </div>
+</body>
+</html>
