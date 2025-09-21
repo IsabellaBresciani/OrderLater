@@ -22,7 +22,7 @@ const orderSchema = new mongoose.Schema({
             "rejected", 
             "cancelled"
         ], 
-        default: 'pending'
+        default: 'waiting to approve'
     }
 }, {
     timestamps: true
