@@ -1,15 +1,19 @@
 const mongoose = require('mongoose');
 
 const itemSchema = new mongoose.Schema({
-    name: { type: String, required: true, maxlength: 20 },
+    name: { type: String, required: true, maxlength: 50 },
     quantity: { type: Number, required: true },
+    unit_price: { type: Number, required: true },
     subtotal: { type: Number, required: true },
+    discount: { type: Number, required: true },
+    subtotalBeforeDiscount: { type: Number, required: true },
     clarification: { type: String, maxlength: 100 }
 });
 
 const orderSchema = new mongoose.Schema({
     items: [itemSchema],
     total: { type: Number, required: true },
+    total_discount: { type: Number, required: true },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     shop: { type: mongoose.Schema.Types.ObjectId, ref: 'Shop', required: true },
     deliver_date: { type: Date, required: true },

@@ -18,7 +18,7 @@
       max-width: 520px;
       margin: 40px auto;
       box-shadow: 0 4px 16px rgba(44, 130, 201, 0.08);
-      text-align: center; /* Centra logo y títulos */
+      text-align: center;
     }
     .logo {
       max-width: 160px;
@@ -30,6 +30,7 @@
       font-size: 1.7em;
     }
     .greeting {
+      color: #222;
       font-size: 1.1em;
       margin-bottom: 18px;
       text-align: left;
@@ -43,7 +44,7 @@
       text-align: left;
     }
     .products-list li {
-      padding: 8px 0;
+      padding: 20px 0;
       border-bottom: 1px solid #e3eaf3;
       font-size: 1em;
     }
@@ -79,13 +80,29 @@
 </head>
 <body>
   <div class="container">
-    <img class="logo" src="https://res.cloudinary.com/dw9e57leg/image/upload/v1758412949/orders-later/order-later-logo_vm7kne.jpg" alt="Order Later">
+    <img class="logo" src="https://res.cloudinary.com/dw9e57leg/image/upload/v1758463452/orders-later/order-later-logo_vm7kne.png" alt="Order Later">
     <h2>¡Tu orden ha sido creada exitosamente!</h2>
     <div class="greeting">Hola <strong>{{userName}}</strong>,</div>
     <div class="help">Gracias por tu compra. Estos son los productos que ordenaste:</div>
     <ul class="products-list">
       {{#each products}}
-        <li>{{this.name}} <span style="color:#2d7cff;">x {{this.quantity}}</span></li>
+        <li style="color:#222">
+          {{this.name}} 
+          <span style="color:#2d7cff;">x {{this.quantity}}</span>  
+          {{#if this.discount}}
+            <span style="float:right; text-decoration: line-through; color:#888;">
+              ${{this.subtotalBeforeDiscount}}
+            </span>
+            <br>
+            <span style="float:right; font-weight:bold; color:#28a745;">
+              ${{this.subtotal}}
+            </span>
+          {{else}}
+            <span style="float:right; font-weight:bold;">
+              ${{this.subtotal}}
+            </span>
+          {{/if}}
+        </li>
       {{/each}}
     </ul>
     <div class="total">Total: ${{total}}</div>
