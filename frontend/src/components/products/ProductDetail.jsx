@@ -83,7 +83,7 @@ const ProductDetail = () => {
 
       <div className="container mt-5">
         <ProductDetailOrder 
-          productId={product.id} 
+          product={product} 
           onCancel={() => navigate(-1)} 
           onAdded={() => alert('added to order')} 
         />

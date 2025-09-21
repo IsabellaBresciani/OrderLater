@@ -1,13 +1,11 @@
-import api from './baseURL';
+import axios from "axios";
+import baseURL from "./baseURL";
 
-const createOrder = (productId, quantity, note) => {
-  return api.post('/orders', {
-    productId,
-    quantity,
-    note,
-  });
+const ordersService = {
+  createOrder: () => {
+    console.warn("ordersService.createOrder() is disabled. Use OrderManager instead.");
+    return Promise.resolve();
+  }
 };
 
-export default {
-  createOrder,
-};
+export default ordersService;
