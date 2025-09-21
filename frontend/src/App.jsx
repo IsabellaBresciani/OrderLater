@@ -11,7 +11,7 @@ import PrivateRoute from './routes/PrivateRoute.jsx';
 import AuthProvider from './context/AuthContext.jsx';
 import Home from './pages/Home.jsx';
 import ShopProducts from './pages/shops/ShopProducts.jsx';
-import ProductDetailPage from './pages/shops/ShopProducts.jsx';
+import ProductDetailPage from './pages/products/ProductDetailPage.jsx';
 
 function App() {
   return (
