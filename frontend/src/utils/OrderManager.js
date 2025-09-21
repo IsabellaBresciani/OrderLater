@@ -67,6 +67,9 @@ const OrderManager = {
   // Method to add a product to the order
   addProductToOrder(product) {
     return this._manageOrder(order => {
+      if (!order.user_id && product.user_id) {
+        order.user_id = product.user_id;
+      }
       order.products.push(product);
       return order;
     });
