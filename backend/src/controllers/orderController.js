@@ -1,5 +1,3 @@
-const BadRequestException = require('../exceptions/BadRequestException');
-const InternalServerExcepcion = require('../exceptions/InternalServerExcepcion');
 const orderService = require('../services/orderService'); 
 
 class OrderController {
