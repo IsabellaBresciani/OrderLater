@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import productService from '../services/productService';
-import ProductCard from '../components/products/ProductCard';
-import Toast from '../utils/Toast';
+import productService from '../../services/productService';
+import ProductCard from '../../components/products/ProductCard';
+import Toast from '../../utils/Toast';
 
 const ShopProducts = () => {
   const { shopId } = useParams();

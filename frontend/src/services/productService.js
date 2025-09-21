@@ -1,12 +1,11 @@
 import axios from 'axios';
-import { API_BASE_URL } from '../config/api';
+import baseURL from './baseURL'; 
 
 const productService = {
-  
   async getProductsByShop(shopId) {
     try {
-      const response = await axios.get(`${API_BASE_URL}/shops/${shopId}/products`);
-      return response.data.products;
+      const response = await axios.get(`${baseURL()}/api/products`);
+      return response.data.products.filter(p => p.shop === shopId);
     } catch (error) {
       throw error.response ? error.response.data : new Error('An unexpected error occurred');
     }
@@ -14,7 +13,7 @@ const productService = {
 
   async getProductById(productId) {
     try {
-      const response = await axios.get(`${API_BASE_URL}/products/${productId}`);
+      const response = await axios.get(`${baseURL()}/api/products/${productId}`);
       return response.data.products;
     } catch (error) {
       throw error.response ? error.response.data : new Error('An unexpected error occurred');
