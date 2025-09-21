@@ -11,8 +11,19 @@ const orderSchema = new mongoose.Schema({
     items: [itemSchema],
     total: { type: Number, required: true },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    commerce: { type: mongoose.Schema.Types.ObjectId, ref: 'Commerce', required: true },
-    deliver_date: { type: Date, required: true }
+    shop: { type: mongoose.Schema.Types.ObjectId, ref: 'Shop', required: true },
+    deliver_date: { type: Date, required: true },
+    state: { type: String, 
+        enum: [
+            "waiting to approve", 
+            "waiting for payment", 
+            "pending to deliver", 
+            "completed", 
+            "rejected", 
+            "cancelled"
+        ], 
+        default: 'pending'
+    }
 }, {
     timestamps: true
 });
