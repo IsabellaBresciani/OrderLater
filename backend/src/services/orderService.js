@@ -45,7 +45,7 @@ class OrderService {
         return createdOrder;
     };
 
-    async notifyCreatedOrderToUser(order) {
+    notifyCreatedOrderToUser(order) {
         const templateSource = fs.readFileSync('src/templates/email/created_order_template.html', 'utf8');
         const template = handlebars.compile(templateSource);
 
@@ -59,8 +59,9 @@ class OrderService {
 
         const htmlBody = template(emailData);
 
-        await this.emailService.sendEmail({
-            to: "franco.petosa15@gmail.com",
+        return this.emailService.sendEmail({
+            //to: "franco.petosa15@gmail.com",
+            to: "brescianisa@gmail.com",
             subject: "Nueva Orden Creada",
             body: htmlBody
         });
