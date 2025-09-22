@@ -1,0 +1,56 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+const cardStyle = {
+  border: '1px solid #e0e0e0',
+  borderRadius: '15px',
+  overflow: 'hidden',
+  transition: 'transform 0.2s ease-in-out, boxShadow 0.3s ease',
+  cursor: 'pointer',
+};
+
+const imageStyle = {
+  width: '100%',
+  height: '200px',
+  objectFit: 'cover',
+};
+
+const cardBodyStyle = {
+  padding: '1.5rem',
+  backgroundColor: '#ffffff',
+};
+
+const titleStyle = {
+  fontSize: '1.2rem',
+  fontWeight: '600',
+  marginBottom: '0.5rem',
+  color: '#333',
+};
+
+const descriptionStyle = {
+  fontSize: '0.9rem',
+  color: '#666',
+  marginBottom: '1rem',
+};
+
+const ShopCard = ({ shop }) => {
+  return (
+    <div className="col-md-3 mb-4 text-center border-2 rounded-3 p-2">
+      <Link to={`/shops/${shop._id}/products`} className="text-decoration-none">
+        <div style={cardStyle}>
+          <img 
+            src={shop.logo_image_url || "https://via.placeholder.com/200"} 
+            alt={shop.name} 
+            style={imageStyle} 
+          />
+          <div style={cardBodyStyle}>
+            <h5 style={titleStyle}>{shop.name}</h5>
+            <p style={descriptionStyle}>{shop.description.substring(0, 60)}...</p>
+          </div>
+        </div>
+      </Link>
+    </div>
+  );
+};
+
+export default ShopCard;
