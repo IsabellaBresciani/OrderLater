@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { OrderManager } from '../../utils/OrderManager.js';
+import { OrderManager } from '../../utils/Ordermanager.js';
 
 const cardStyle = {
   border: '1px solid #e0e0e0',
