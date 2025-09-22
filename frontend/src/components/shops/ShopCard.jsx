@@ -7,6 +7,9 @@ const cardStyle = {
   overflow: 'hidden',
   transition: 'transform 0.2s ease-in-out, boxShadow 0.3s ease',
   cursor: 'pointer',
+  height: '100%',         
+  display: 'flex',
+  flexDirection: 'column',
 };
 
 const imageStyle = {
@@ -18,6 +21,10 @@ const imageStyle = {
 const cardBodyStyle = {
   padding: '1.5rem',
   backgroundColor: '#ffffff',
+  flexGrow: 1,             
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
 };
 
 const titleStyle = {
@@ -31,6 +38,11 @@ const descriptionStyle = {
   fontSize: '0.9rem',
   color: '#666',
   marginBottom: '1rem',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  display: '-webkit-box',
+  WebkitLineClamp: 2,      
+  WebkitBoxOrient: 'vertical',
 };
 
 const ShopCard = ({ shop }) => {
