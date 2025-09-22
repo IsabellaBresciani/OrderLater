@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { OrderManager } from '../../utils/OrderManager.js';
+import { useNavigate } from 'react-router-dom';
+import { OrderManager } from '../../utils/Ordermanager.js';
 
 const cardStyle = {
   border: '1px solid #e0e0e0',
@@ -9,33 +10,38 @@ const cardStyle = {
   boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)',
 };
 
-const ProductDetailOrder = ({ product, userId, onCancel, onAdded }) => {
+const ProductDetailOrder = ({ product, userId, shopId, onCancel, onAdded }) => {
   const [quantity, setQuantity] = useState(1);
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate(); 
 
   const handleAdd = (e) => {
     e.preventDefault();
 
-    if (!quantity || quantity <= 0) {
+    if (!quantity || Number(quantity) <= 0) {
       setError("Can't make the order because the quantity is negative or zero");
       return;
     }
 
     setError("");
 
-    // Guardar en localStorage con OrderManager
-    OrderManager.addProductToOrder({
-      id: product.id,
+    // Guardar en localStorage con OrderManager (asegurando id/_id)
+    OrderManager.addProductToOrder({        
+      _id: product._id || product.id,
       sku: product.sku,
       name: product.name,
-      price: product.unit_price,
+      price: product.unit_price ?? product.price,
+      advance_in_days: product.advance_in_days,
+      discount: product.discount,
       quantity: Number(quantity),
       clarification: note,
-      user_id: userId 
     });
 
     if (onAdded) onAdded();
+
+    alert('added to order');
+    navigate(-1);
   };
 
   return (
