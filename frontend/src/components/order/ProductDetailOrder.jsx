@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { OrderManager } from '../../utils/Ordermanager.js';
+import { OrderManager } from '../../utils/OrderManager.js';
 
 const cardStyle = {
   border: '1px solid #e0e0e0',

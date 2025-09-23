@@ -32,16 +32,8 @@ const StaticFooter = styled.footer`
 `;
 
 function Order() {
-  const initialOrder = OrderManager.getOrderFromLocalStorage();
-  const [order, setOrder] = useState(initialOrder);
+  const [order, setOrder] = useState(OrderManager.getOrderFromLocalStorage());
   const navigate = useNavigate(); 
-
-  useEffect(() => {
-    if (initialOrder.products.length === 0) {
-      OrderManager.mockOrderToLocalStorage();
-      setOrder(OrderManager.getOrderFromLocalStorage());
-    }
-  }, []);
 
   const handleRemoveProduct = (productIdOrSku) => {
     OrderManager.removeProductFromOrder(productIdOrSku);

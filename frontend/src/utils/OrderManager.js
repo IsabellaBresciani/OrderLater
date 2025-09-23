@@ -1,16 +1,23 @@
+
+
+const currentUser = localStorage.getItem('currentUser');
 const OrderManager = {
 
-  // Method to get the current order from localStorage
- getOrderFromLocalStorage() {
+  createOrderInLocalStorage() {
+      localStorage.setItem('currentOrder', JSON.stringify({ user_id: currentUser._id, shop_id: '', products: [] }));
+  },
+
+  getOrderFromLocalStorage() {
+
     const stored = localStorage.getItem('currentOrder');
     if (stored) {
       try {
         return JSON.parse(stored);
       } catch {
-        return { user_id: '', shop_id: '', products: [] };
+        return { user_id: currentUser._id, shop_id: '', products: [] };
       }
     }
-    return { user_id: '', shop_id: '', products: [] };
+    return { user_id: currentUser._id, shop_id: '', products: [] };
   },
 
   saveOrderToLocalStorage(order) {
@@ -26,13 +33,6 @@ const OrderManager = {
 
   addProductToOrder(product) {
     return this._manageOrder(order => {
-      if (!order.user_id && product.user_id) {
-        order.user_id = product.user_id;
-      }
-
-      if (!order.shop_id && product.shop_id) {   
-        order.shop_id = product.shop_id;
-      }
 
       // identificador entrante (puede venir como _id o id)
       const incomingId = product._id || product.id || null;
