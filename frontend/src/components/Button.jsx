@@ -14,7 +14,7 @@ const StyledButton = styled.button`
   justify-content: center;
   text-decoration: none;
 
-  ${props => props.variant === 'primary' && css`
+  ${props => props.$variant === 'primary' && css`
     background-color: #007bff;
     color: white;
 
@@ -23,7 +23,7 @@ const StyledButton = styled.button`
     }
   `}
 
-  ${props => props.variant === 'secondary' && css`
+  ${props => props.$variant === 'secondary' && css`
     background-color: #6c757d;
     color: white;
 
@@ -32,7 +32,7 @@ const StyledButton = styled.button`
     }
   `}
 
-  ${props => props.variant === 'danger' && css`
+  ${props => props.$variant === 'danger' && css`
     background-color: #dc3545;
     color: white;
 
@@ -67,7 +67,7 @@ const Button = ({
   return (
     <StyledButton
       onClick={onClick}
-      variant={variant}
+      $variant={variant}
       type={type}
       disabled={disabled}
       {...props}

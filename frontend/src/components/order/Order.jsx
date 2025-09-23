@@ -4,6 +4,9 @@ import OrderSummary from './OrderSummary.jsx';
 import { OrderManager } from '../../utils/OrderManager.js';
 import Button from '../Button.jsx';
 import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { ShopContext } from '../../context/ShopContext.jsx';
+import { useContext } from 'react';
 
 const OrderContainer = styled.div`
   display: flex;
@@ -34,6 +37,9 @@ const StaticFooter = styled.footer`
 function Order() {
   const [order, setOrder] = useState(OrderManager.getOrderFromLocalStorage());
   const navigate = useNavigate(); 
+  const { shopId: shopIdFromParams } = useParams();
+  const shopContext = useContext(ShopContext);
+  const shopId = shopContext?.shopId || shopIdFromParams;
 
   const handleRemoveProduct = (productIdOrSku) => {
     OrderManager.removeProductFromOrder(productIdOrSku);
@@ -46,8 +52,12 @@ function Order() {
   };
 
   const handleContinue = () => {
-    // Navigate to the checkout page
-    navigate('/order-checkout');
+    const targetShopId = shopId || order.shop_id;
+    if (!targetShopId) {
+      console.error('No shopId available for checkout', { shopId, order });
+      return;
+    }
+    navigate(`/shops/${targetShopId}/order-checkout`);
   };
 
   return (

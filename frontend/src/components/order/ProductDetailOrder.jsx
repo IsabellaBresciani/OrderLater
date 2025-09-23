@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { OrderManager } from '../../utils/OrderManager.js';
+import { ShopContext } from '../../context/ShopContext.jsx';
 
 const cardStyle = {
   border: '1px solid #e0e0e0',
@@ -10,11 +11,14 @@ const cardStyle = {
   boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)',
 };
 
-const ProductDetailOrder = ({ product, userId, shopId, onCancel, onAdded }) => {
+const ProductDetailOrder = ({ product, userId, onCancel, onAdded }) => {
   const [quantity, setQuantity] = useState(1);
-  const [note, setNote] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate(); 
+  const [note, setNote] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const shopContext = useContext(ShopContext);
+  const shopId = shopContext?.shopId;
 
   const handleAdd = (e) => {
     e.preventDefault();
@@ -24,19 +28,21 @@ const ProductDetailOrder = ({ product, userId, shopId, onCancel, onAdded }) => {
       return;
     }
 
-    setError("");
+    setError('');
 
-    // Guardar en localStorage con OrderManager (asegurando id/_id)
-    OrderManager.addProductToOrder({        
-      _id: product._id || product.id,
-      sku: product.sku,
-      name: product.name,
-      price: product.unit_price ?? product.price,
-      advance_in_days: product.advance_in_days,
-      discount: product.discount,
-      quantity: Number(quantity),
-      clarification: note,
-    });
+    OrderManager.addProductToOrder(
+      {
+        _id: product._id || product.id,
+        sku: product.sku,
+        name: product.name,
+        price: product.unit_price ?? product.price,
+        advance_in_days: product.advance_in_days,
+        discount: product.discount,
+        quantity: Number(quantity),
+        clarification: note,
+      },
+      shopId
+    );
 
     if (onAdded) onAdded();
 
@@ -58,7 +64,7 @@ const ProductDetailOrder = ({ product, userId, shopId, onCancel, onAdded }) => {
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
             required
-            className={`form-control ${error ? "is-invalid" : ""}`}
+            className={`form-control ${error ? 'is-invalid' : ''}`}
           />
           {error && <div className="invalid-feedback">{error}</div>}
         </div>
@@ -75,15 +81,15 @@ const ProductDetailOrder = ({ product, userId, shopId, onCancel, onAdded }) => {
         </div>
 
         <div className="d-flex justify-content-end gap-2 mt-4">
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={onCancel}
             className="btn btn-danger d-flex align-items-center gap-2"
           >
             <i className="bi bi-x-circle"></i> Cancel
           </button>
 
-          <button 
+          <button
             type="submit"
             className="btn btn-primary d-flex align-items-center gap-2"
           >

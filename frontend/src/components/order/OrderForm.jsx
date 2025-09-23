@@ -101,35 +101,46 @@ function OrderForm() {
   }, [order.products, deliveryDate]);
 
   const handleRemoveProduct = (productIdOrSku) => {
-      OrderManager.removeProductFromOrder(productIdOrSku);
-      setOrder(OrderManager.getOrderFromLocalStorage());
-    };
-  
+    OrderManager.removeProductFromOrder(productIdOrSku);
+    setOrder(OrderManager.getOrderFromLocalStorage());
+  };
+
   const handleUpdateQuantity = (productIdOrSku, updatedFields) => {
-      OrderManager.updateProductInOrder(productIdOrSku, updatedFields);
-      setOrder(OrderManager.getOrderFromLocalStorage());
-    };
+    OrderManager.updateProductInOrder(productIdOrSku, updatedFields);
+    setOrder(OrderManager.getOrderFromLocalStorage());
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true); // Disable the button to prevent multiple clicks
+    setIsSubmitting(true);
 
     try {
-      // Create the data object with the exact fields required by the API
+      if (!order.user_id) {
+        toast.error('Debes iniciar sesión antes de enviar la orden.');
+        setIsSubmitting(false);
+        return;
+      }
+      if (!order.shop_id) {
+        toast.error('No se pudo determinar la tienda. Vuelve a la página del comercio y agrega productos.');
+        setIsSubmitting(false);
+        return;
+      }
+
       const newOrderData = {
         user_id: order.user_id,
-        shop_id: order.commerce_id, // Renamed to match the API
+        shop_id: order.shop_id,
         products: order.products.map(p => ({
-            id: p._id || p.id || p.sku,
-            quantity: p.quantity,
-            clarification: p.clarification || undefined, // Use undefined to not send the key if empty
+          id: p._id || p.id || p.sku,
+          quantity: p.quantity,
+          clarification: p.clarification || undefined,
         })),
-        deliver_date: deliveryDate.toISOString(), // Format as YYYY-MM-DD
+        deliver_date: deliveryDate.toISOString(),
       };
+
       console.log('Submitting order data:', newOrderData);
       await orderCreate(newOrderData);
       toast.success('Order placed successfully!');
-      
+
       OrderManager.clearOrder();
       setOrder(OrderManager.getOrderFromLocalStorage());
 
@@ -137,9 +148,10 @@ function OrderForm() {
       toast.error('Failed to place order. Please try again.');
       console.error('Error creating order:', error);
     } finally {
-      setIsSubmitting(false); // Re-enable the button
+      setIsSubmitting(false);
     }
   };
+
 
   return (
     <FormContainer onSubmit={handleSubmit}>
@@ -147,7 +159,7 @@ function OrderForm() {
         <h2>Place an Order</h2>
         <p>Review your order and select a delivery date to proceed.</p>
       </Header>
-      
+
       {order.products.length === 0 ? (
         <p style={{ textAlign: 'center', color: '#888' }}>
           No products in your order. Please add items to continue.
@@ -160,10 +172,10 @@ function OrderForm() {
               items={order.products}
               onDelete={handleRemoveProduct}
               onQuantityChange={handleUpdateQuantity}
-              isReduced = {false}
+              isReduced={false}
             />
           </Section>
-          
+
           <Section>
             <SectionTitle>Delivery Details</SectionTitle>
             <DatePickerWrapper>
@@ -176,13 +188,13 @@ function OrderForm() {
               />
             </DatePickerWrapper>
           </Section>
-          
+
           <Section>
             <TotalsDisplay totals={orderTotals} />
           </Section>
         </>
       )}
-      
+
       <Button
         type="submit"
         disabled={order.products.length === 0 || isSubmitting}

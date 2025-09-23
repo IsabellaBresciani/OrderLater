@@ -1,25 +1,26 @@
-import React, { createContext, useState } from 'react';
+// context/ShopContext.jsx
+import React, { createContext, useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
-// 1. Create the context with a default value of null
+// 1. Crear contexto
 export const ShopContext = createContext(null);
 
-// 2. Create the provider component
+// 2. Provider
 const ShopContextProvider = ({ children }) => {
-  // State to hold the shop ID
-  const [shopId, setShopId] = useState(null);
+  const { shopId } = useParams(); 
+  const [currentShopId, setCurrentShopId] = useState(null);
 
-  // The value object that will be passed to consuming components
-  const contextValue = {
-    shopId,
-    setShopId,
-  };
+  useEffect(() => {
+    if (shopId) {
+      setCurrentShopId(shopId);
+    }
+  }, [shopId]);
 
   return (
-    <ShopContext.Provider value={contextValue}>
+    <ShopContext.Provider value={{ shopId: currentShopId, setShopId: setCurrentShopId }}>
       {children}
     </ShopContext.Provider>
   );
 };
 
-// 3. Export the provider
 export default ShopContextProvider;

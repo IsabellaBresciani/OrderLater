@@ -88,7 +88,6 @@ const ProductDetail = () => {
         <ProductDetailOrder 
           product={product} 
           userId={userId} 
-          shopId={shopId}  
           onCancel={() => navigate(-1)} 
           onAdded={() => {}}
         />
