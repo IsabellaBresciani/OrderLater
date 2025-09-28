@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components'; // Import styled-components
 import productService from '../../services/productService';
@@ -86,10 +86,10 @@ const OrderWrapper = styled.div`
 // --- React Component ---
 
 const ShopProducts = () => {
-  const { shopId } = useParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { shopId } = useParams();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -152,7 +152,7 @@ const ShopProducts = () => {
           {/* Order Summary Column */}
           <div className="col-lg-4 d-none d-lg-block">
             <OrderWrapper>
-              <Order />
+              <Order shopId={shopId}/>
             </OrderWrapper>
           </div>
         </div>

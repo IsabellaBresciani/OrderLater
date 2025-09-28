@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { OrderManager } from '../../utils/OrderManager.js';
-import { ShopContext } from '../../context/ShopContext.jsx';
+import Toast from '../../utils/Toast';
 
 const cardStyle = {
   border: '1px solid #e0e0e0',
@@ -17,8 +17,6 @@ const ProductDetailOrder = ({ product, userId, onCancel, onAdded }) => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const shopContext = useContext(ShopContext);
-  const shopId = shopContext?.shopId;
 
   const handleAdd = (e) => {
     e.preventDefault();
@@ -40,13 +38,11 @@ const ProductDetailOrder = ({ product, userId, onCancel, onAdded }) => {
         discount: product.discount,
         quantity: Number(quantity),
         clarification: note,
-      },
-      shopId
+      }
     );
 
     if (onAdded) onAdded();
-
-    alert('added to order');
+    Toast({ icon: 'success', title: 'Added to order', text: `${product.name} x${quantity} added to your order.` });
     navigate(-1);
   };
 

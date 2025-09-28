@@ -1,13 +1,11 @@
 const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
 
 const OrderManager = {
-  createOrderInLocalStorage(shopId = '') {
+  createOrderInLocalStorage() {
     localStorage.setItem(
       'currentOrder',
       JSON.stringify({
-        user_id: currentUser?._id || '',
-        shop_id: shopId,
-        products: [],
+        products: []
       })
     );
   },
@@ -18,10 +16,10 @@ const OrderManager = {
       try {
         return JSON.parse(stored);
       } catch {
-        return { user_id: currentUser?._id || '', shop_id: '', products: [] };
+        return { products: [] };
       }
     }
-    return { user_id: currentUser?._id || '', shop_id: '', products: [] };
+    return { products: [] };
   },
 
   saveOrderToLocalStorage(order) {
@@ -35,11 +33,8 @@ const OrderManager = {
     return newOrder;
   },
 
-  addProductToOrder(product, shopId) {
+  addProductToOrder(product) {
     return this._manageOrder((order) => {
-      if (!order.shop_id && shopId) {
-        order.shop_id = shopId; 
-      }
 
       const incomingId = product._id || product.id || null;
       const incomingSku = product.sku || null;

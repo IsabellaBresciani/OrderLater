@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button.jsx'; // Make sure the path is correct
 import OrderForm from '../../components/order/OrderForm.jsx';
-
+import { useParams } from 'react-router-dom';
 
 // Styled components for the layout
 const CheckoutContainer = styled.div`
@@ -32,10 +32,11 @@ function OrderCheckout() {
     const handleGoBack = () => {
         navigate(-1); 
     };
+    const { shopId } = useParams();
 
     return (
 
-            <OrderForm />
+            <OrderForm  shopId={shopId}/>
 
     );
 }

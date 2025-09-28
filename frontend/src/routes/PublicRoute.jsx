@@ -7,7 +7,7 @@ const PublicRoute = ({ children }) => {
   console.log("PublicRoute rendered");
   const { isAuthenticated } = useContext(AuthContext);
 
-  if (isAuthenticated) return <Navigate to="/" />;
+  if (isAuthenticated) return <Navigate to="/shops" />;
   console.log("PublicRoute rendered 2");
   return children;
 };

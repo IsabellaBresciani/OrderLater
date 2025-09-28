@@ -5,7 +5,6 @@ import { OrderManager } from '../../utils/OrderManager.js';
 import Button from '../Button.jsx';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-import { ShopContext } from '../../context/ShopContext.jsx';
 import { useContext } from 'react';
 
 const OrderContainer = styled.div`
@@ -34,12 +33,13 @@ const StaticFooter = styled.footer`
   z-index: 10;
 `;
 
-function Order() {
-  const [order, setOrder] = useState(OrderManager.createOrderInLocalStorage());
+function Order(shopId) {
+  const [order, setOrder] = useState(() => {
+  const existingOrder = OrderManager.getOrderFromLocalStorage();
+  return existingOrder || OrderManager.createOrderInLocalStorage() || { products: [] };
+  });
   const navigate = useNavigate(); 
-  const { shopId: shopIdFromParams } = useParams();
-  const shopContext = useContext(ShopContext);
-  const shopId = shopContext?.shopId || shopIdFromParams;
+
 
   const handleRemoveProduct = (productIdOrSku) => {
     OrderManager.removeProductFromOrder(productIdOrSku);
@@ -52,12 +52,7 @@ function Order() {
   };
 
   const handleContinue = () => {
-    const targetShopId = shopId || order.shop_id;
-    if (!targetShopId) {
-      console.error('No shopId available for checkout', { shopId, order });
-      return;
-    }
-    navigate(`/shops/${targetShopId}/order-checkout`);
+    navigate(`/shops/${shopId.shopId}/order-checkout`);
   };
 
   return (

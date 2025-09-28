@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -9,7 +9,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { OrderManager } from '../../utils/OrderManager.js';
 import orderCreate from '../../services/orderCreate.js';
-
+import { AuthContext } from "../../context/AuthContext.jsx";
 
 export const FormContainer = styled.form`
   background: #f9fafb; /* Lighter, more modern background */
@@ -65,12 +65,13 @@ export const Section = styled.div`
   gap: 1.5rem;
 `;
 
-function OrderForm() {
+function OrderForm(shopId) {
   const [order, setOrder] = useState(OrderManager.getOrderFromLocalStorage());
   const [deliveryDate, setDeliveryDate] = useState(new Date());
   const [calculatedItems, setCalculatedItems] = useState([]);
   const [orderTotals, setOrderTotals] = useState({ subtotal: 0, discount: 0, total: 0 });
   const [isSubmitting, setIsSubmitting] = useState(false); // New state to manage form submission status
+  const { currentUser } = useContext(AuthContext);
 
   useEffect(() => {
     let subtotal = 0;
@@ -116,20 +117,20 @@ function OrderForm() {
     setIsSubmitting(true);
 
     try {
-      if (!order.user_id) {
+      if (!currentUser._id) {
         toast.error('Debes iniciar sesión antes de enviar la orden.');
         setIsSubmitting(false);
         return;
       }
-      if (!order.shop_id) {
+      if (!shopId.shopId) {
         toast.error('No se pudo determinar la tienda. Vuelve a la página del comercio y agrega productos.');
         setIsSubmitting(false);
         return;
       }
 
       const newOrderData = {
-        user_id: order.user_id,
-        shop_id: order.shop_id,
+        user_id: currentUser._id,
+        shop_id: shopId.shopId,
         products: order.products.map(p => ({
           id: p._id || p.id || p.sku,
           quantity: p.quantity,

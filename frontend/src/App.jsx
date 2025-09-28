@@ -13,7 +13,7 @@ import Home from './pages/Home.jsx';
 import ShopProducts from './pages/shops/ShopProducts.jsx';
 import ProductDetailPage from './pages/products/ProductDetailPage.jsx';
 import OrderCheckout from './pages/orders/OrderCheckout.jsx';
-import ShopContextProvider from './context/ShopContext.jsx';
+import ShopList from './pages/shops/ShopList.jsx';
 
 function App() {
   return (
@@ -26,20 +26,10 @@ function App() {
           
           {/* Rutas Privadas */}
           <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
-          <Route
-            path="/shops/:shopId/*"
-            element={
-              <PrivateRoute>
-                <ShopContextProvider>
-                  <Routes>
-                    <Route path="products" element={<ShopProducts />} />
-                    <Route path="products/:productId" element={<ProductDetailPage />} />
-                    <Route path="order-checkout" element={<OrderCheckout />} />
-                  </Routes>
-                </ShopContextProvider>
-              </PrivateRoute>
-            }
-          />
+          <Route path="/shops" element={<PrivateRoute><ShopList /></PrivateRoute>} />
+          <Route path="/shops/:shopId/products" element={ <PrivateRoute> <ShopProducts /></PrivateRoute>} />
+          <Route path="/shops/:shopId/order-checkout" element={<PrivateRoute>  <OrderCheckout />     </PrivateRoute>} />
+          <Route path="/shops/:shopId/products/:productId" element={<PrivateRoute><ProductDetailPage /></PrivateRoute>} />
         </Routes>
       </Router>
     </AuthProvider>

@@ -52,7 +52,7 @@ const ItemSku = styled.span`
 `;
 
 const ClarificationTextarea = styled.textarea`
-  width: 100%;
+  width: 80%;
   border: 1px solid #d1d5db;
   border-radius: 8px;
   padding: 0.5rem;
@@ -148,19 +148,19 @@ const OrderItem = ({ item, onDelete, onQuantityChange }) => {
         </TextDetails>
       </ProductInfo>
 
-      <QuantityInput
+      <QuantityInput className = "mb-0 mt-5"
         type="number"
         min={1}
         value={item.quantity}
         onChange={handleQuantityChange}
       />
       
-      <PriceSection>
+      <PriceSection className = "mb-0 mt-5">
         <ItemTotalPrice>${totalItemPrice.toFixed(2)}</ItemTotalPrice>
         <ItemUnitPrice>(${item.price.toFixed(2)} each)</ItemUnitPrice>
       </PriceSection>
       
-      <DeleteButton onClick={() => onDelete(item._id || item.id || item.sku)}>
+      <DeleteButton className = "mb-0 mt-5" onClick={() => onDelete(item._id || item.id || item.sku)}>
         Eliminar
       </DeleteButton>
     </OrderItemWrapper>
