@@ -23,7 +23,7 @@ const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 const userId = currentUser ? currentUser._id : null;
 
 const ProductDetail = () => {
-  const { productId } = useParams();
+  const { shopId, productId } = useParams(); 
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -89,7 +89,7 @@ const ProductDetail = () => {
           product={product} 
           userId={userId} 
           onCancel={() => navigate(-1)} 
-          onAdded={() => alert('added to order')} 
+          onAdded={() => {}}
         />
       </div>
     </>

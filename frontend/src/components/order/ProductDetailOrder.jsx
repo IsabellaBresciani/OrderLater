@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { OrderManager } from '../../utils/Ordermanager.js';
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { OrderManager } from '../../utils/OrderManager.js';
+import Toast from '../../utils/Toast';
 
 const cardStyle = {
   border: '1px solid #e0e0e0',
@@ -11,31 +13,37 @@ const cardStyle = {
 
 const ProductDetailOrder = ({ product, userId, onCancel, onAdded }) => {
   const [quantity, setQuantity] = useState(1);
-  const [note, setNote] = useState("");
-  const [error, setError] = useState("");
+  const [note, setNote] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
 
   const handleAdd = (e) => {
     e.preventDefault();
 
-    if (!quantity || quantity <= 0) {
+    if (!quantity || Number(quantity) <= 0) {
       setError("Can't make the order because the quantity is negative or zero");
       return;
     }
 
-    setError("");
+    setError('');
 
-    // Guardar en localStorage con OrderManager
-    OrderManager.addProductToOrder({
-      id: product.id,
-      sku: product.sku,
-      name: product.name,
-      price: product.unit_price,
-      quantity: Number(quantity),
-      clarification: note,
-      user_id: userId 
-    });
+    OrderManager.addProductToOrder(
+      {
+        _id: product._id || product.id,
+        sku: product.sku,
+        name: product.name,
+        price: product.unit_price ?? product.price,
+        advance_in_days: product.advance_in_days,
+        discount: product.discount,
+        quantity: Number(quantity),
+        clarification: note,
+      }
+    );
 
     if (onAdded) onAdded();
+    Toast({ icon: 'success', title: 'Added to order', text: `${product.name} x${quantity} added to your order.` });
+    navigate(-1);
   };
 
   return (
@@ -52,7 +60,7 @@ const ProductDetailOrder = ({ product, userId, onCancel, onAdded }) => {
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
             required
-            className={`form-control ${error ? "is-invalid" : ""}`}
+            className={`form-control ${error ? 'is-invalid' : ''}`}
           />
           {error && <div className="invalid-feedback">{error}</div>}
         </div>
@@ -69,15 +77,15 @@ const ProductDetailOrder = ({ product, userId, onCancel, onAdded }) => {
         </div>
 
         <div className="d-flex justify-content-end gap-2 mt-4">
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={onCancel}
             className="btn btn-danger d-flex align-items-center gap-2"
           >
             <i className="bi bi-x-circle"></i> Cancel
           </button>
 
-          <button 
+          <button
             type="submit"
             className="btn btn-primary d-flex align-items-center gap-2"
           >
