@@ -35,7 +35,7 @@ const StaticFooter = styled.footer`
 `;
 
 function Order() {
-  const [order, setOrder] = useState(OrderManager.getOrderFromLocalStorage());
+  const [order, setOrder] = useState(OrderManager.createOrderInLocalStorage());
   const navigate = useNavigate(); 
   const { shopId: shopIdFromParams } = useParams();
   const shopContext = useContext(ShopContext);
