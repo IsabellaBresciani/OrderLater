@@ -1,5 +1,5 @@
 const orderService = require('../services/orderService'); 
-const Actions = require('../constants/Actions.js')
+const Actions = require('../constants/Actions.js');
 
 class OrderController {
 
