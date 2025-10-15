@@ -64,6 +64,58 @@ class OrderService {
         return createdOrder;
     };
 
+    payOrder = async (id) => {
+        if (!id) throw new BadRequestException('Order ID is required');
+        
+        const order = await orderDAO.getOrderById(id);
+        
+        if (!order) throw new NotFoundException('Orders not found for the given user ID');
+
+        if(order.state !== "waiting for payment") {
+            throw new BadRequestException(`Only orders in 'waiting for payment' state can be payed.`);
+        }
+
+        order.state = "pending to deliver";
+
+        const payedOrder = orderDAO.updateOrder(id, order);
+
+        this.notifyUpdatedOrderState(
+            "francopietrantuono999@gmail.com",
+            "Tu orden ha sido pagada correctamente.",
+            "Le informamos que el pago de su orden en Order Later ha sido exitoso. Le informaremos sobre el estado de su compra cuando se aproxime la fecha de entrega.",
+            payedOrder,
+            "Order Later - Orden de compra pagada"
+        );
+
+        return payedOrder;
+    }
+
+    cancelOrder = async (id) => {
+        if (!id) throw new BadRequestException('Order ID is required');
+        
+        const order = await orderDAO.getOrderById(id);
+        
+        if (!order) throw new NotFoundException('Orders not found for the given user ID');
+
+        if(order.state !== "waiting for approve" || order.state !== "waiting for payment") {
+            throw new BadRequestException(`Only orders in 'waiting for approve' or 'waiting for payment' state can be payed.`);
+        }
+
+        order.state = "cancelled";
+
+        const payedOrder = orderDAO.updateOrder(id, order);
+
+        this.notifyUpdatedOrderState(
+            "francopietrantuono999@gmail.com",
+            "Tu orden ha sido cancelada correctamente.",
+            "Le informamos que su orden de compra en Order Later ha sido cancelada exitosamente.",
+            payedOrder,
+            "Order Later - Orden de compra cancelada"
+        );
+
+        return payedOrder;
+    }
+
     notifyUpdatedOrderState(toUserEmail = "francopietrantuono999@gmail.com", title, description, order, subject) {
         const templateSource = fs.readFileSync('src/templates/email/updated_order_state_template.html', 'utf8');
         const template = handlebars.compile(templateSource);
