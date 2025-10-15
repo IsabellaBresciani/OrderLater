@@ -64,6 +64,36 @@ class OrderService {
         return createdOrder;
     };
 
+    notifyUpdatedOrderState(toUserEmail = "francopietrantuono999@gmail.com", title, description, order, subject) {
+        const templateSource = fs.readFileSync('src/templates/email/updated_order_state_template.html', 'utf8');
+        const template = handlebars.compile(templateSource);
+
+        const emailData = {
+            title,
+            description,
+            userName: order.user_name || 'Usuario',
+            products: order.items.map(item => ({
+                name: item.name,
+                quantity: item.quantity,
+                unit_price: item.unit_price,
+                subtotal: item.subtotal,
+                discount: item.discount,
+                subtotalBeforeDiscount: item.subtotalBeforeDiscount
+            })),
+            total: order.total.toFixed(2),
+            deliverDate: order.deliver_date,
+            year: new Date().getFullYear()
+        };
+
+        const htmlBody = template(emailData);
+
+        return this.emailService.sendEmail({
+            to: toUserEmail,
+            subject: subject,
+            body: htmlBody
+        });
+    }
+
     notifyCreatedOrderToUser(order) {
         const templateSource = fs.readFileSync('src/templates/email/created_order_template.html', 'utf8');
         const template = handlebars.compile(templateSource);
