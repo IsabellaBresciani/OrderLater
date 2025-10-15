@@ -14,6 +14,16 @@ class OrderService {
         this.shopService = shopService;
     }
 
+    getOrdersByUserId = async (userId) => {
+        if (!userId) throw new BadRequestException('User ID is required');
+
+        const order = await orderDAO.getOrdersByUserId(userId);
+    
+        if (!order) throw new NotFoundException('Orders not found for the given user ID');
+
+        return order;
+    }
+
     createOrder = async (data) => {
         
         if (!data.user_id) throw new NotFoundException('User not found');
