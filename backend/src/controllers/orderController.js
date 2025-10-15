@@ -51,6 +51,32 @@ class OrderController {
             data: { order_id: order._id }
         });
     };
+    
+    payOrder = async (request, response) => {
+        const { id } = request.params;
+
+        await this.orderService.payOrder(id);
+
+        return response
+            .status(200)
+            .json({ 
+                status: 'Success',
+                message: 'Order payed successfully',
+            });
+    };
+
+    cancelOrder = async (request, response) => {
+        const { id } = request.params;
+
+        await this.orderService.cancelOrder(id);
+
+        return response
+            .status(200)
+            .json({ 
+                status: 'Success',
+                message: 'Order cancelled successfully',
+            });
+    }
 }
 
 module.exports = new OrderController(orderService);
