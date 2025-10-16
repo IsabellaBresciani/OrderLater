@@ -97,13 +97,13 @@ class OrderService {
         
         if (!order) throw new NotFoundException('Orders not found for the given user ID');
 
-        if(order.state !== "waiting for approve" || order.state !== "waiting for payment") {
+        if(order.state !== "waiting to approve" && order.state !== "waiting for payment") {
             throw new BadRequestException(`Only orders in 'waiting for approve' or 'waiting for payment' state can be payed.`);
         }
 
         order.state = "cancelled";
 
-        const payedOrder = orderDAO.updateOrder(id, order);
+        const payedOrder = await orderDAO.updateOrder(id, order);
 
         this.notifyUpdatedOrderState(
             "francopietrantuono999@gmail.com",
