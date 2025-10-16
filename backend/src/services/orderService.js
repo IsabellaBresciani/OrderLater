@@ -96,7 +96,7 @@ class OrderService {
 
         const orders = await orderDAO.searchShops(serach_filter, fields);
 
-        return orders.map(shopOwnerCalculateOrderActions);
+        return orders.map(shopOwnerPopulateOrderActions);
     }
 }
 
@@ -124,7 +124,7 @@ function applyDiscount(advance_in_days, deliver_date){
     return daysDiff >= advance_in_days;
 }
 
-function shopOwnerCalculateOrderActions(order) {
+function shopOwnerPopulateOrderActions(order) {
     const actions = ['view_details'];
 
     if (order.state === 'waiting to approve') {
