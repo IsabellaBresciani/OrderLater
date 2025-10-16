@@ -15,9 +15,6 @@ class OrderService {
     }
 
     createOrder = async (data) => {
-        
-        if (!data.user_id) throw new NotFoundException('User not found');
-
         if (!data.shop_id) throw new BadRequestException('Shop ID is required');
        
         await this.shopService.getShopById(data.shop_id)
@@ -49,17 +46,17 @@ class OrderService {
 
         const createdOrder = await orderDAO.createOrder(newOrder);
 
-        this.notifyCreatedOrderToUser(newOrder);
+        this.notifyCreatedOrderToUser(newOrder, data.user);
         
         return createdOrder;
     };
 
-    notifyCreatedOrderToUser(order) {
+    notifyCreatedOrderToUser(order, user) {
         const templateSource = fs.readFileSync('src/templates/email/created_order_template.html', 'utf8');
         const template = handlebars.compile(templateSource);
 
         const emailData = {
-            userName: order.user_name || 'Usuario',
+            userName: user.first_name + ' ' + user.last_name || 'Usuario',
             products: order.items.map(item => ({
                 name: item.name,
                 quantity: item.quantity,
@@ -76,8 +73,7 @@ class OrderService {
         const htmlBody = template(emailData);
 
         return this.emailService.sendEmail({
-            to: "franco.petosa15@gmail.com",
-            //to: "brescianisa@gmail.com",
+            to: user.email,
             subject: "Nueva Orden Creada",
             body: htmlBody
         });

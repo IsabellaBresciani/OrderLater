@@ -27,7 +27,7 @@ class AuthService {
 
         if (!passwordMatches) throw new BadRequestException('Invalid Credentials');
 
-        const payload = { userId: user.id, email: user.email };
+        const payload = { userId: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name };
         const secretKey = process.env.JWT_SECRET;
         const expiration = process.env.TOKE_EXPIRATION || '4h'; // Default to 30 seconds if not set
         console.log(`Token expiration: ${expiration}`);
