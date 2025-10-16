@@ -2,7 +2,7 @@ const  Order = require('../models/Order.js');
 
 class OrderDAO {
     getOrderById(id) {
-        return Product.findById(id);
+        return Order.findById(id);
     }
 
     getOrdersByUserId(userId) {
@@ -10,7 +10,7 @@ class OrderDAO {
     }
 
     updateOrder(id, updateData) {
-        return Product.findByIdAndUpdate(id, updateData, { new: true });
+        return Order.findByIdAndUpdate(id, updateData, { new: true });
     }
 
     createOrder(order) {
