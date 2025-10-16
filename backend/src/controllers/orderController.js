@@ -13,7 +13,7 @@ class OrderController {
         const orders = await this.orderService.getOrdersByUserId(userId);
         
 
-        orthersToSend = orders.map(order => ({
+        ordersToSend = orders.map(order => ({
             id: order._id,
             total: order.total,
             total_discount: order.total_discount,
@@ -34,7 +34,7 @@ class OrderController {
             .json({ 
                 status: 'Success',
                 message: 'Orders retrieved successfully',
-                data: { orthersToSend }
+                data: { ordersToSend }
             });
     }
 

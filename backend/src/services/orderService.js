@@ -17,11 +17,11 @@ class OrderService {
     getOrdersByUserId = async (userId) => {
         if (!userId) throw new BadRequestException('User ID is required');
 
-        const order = await orderDAO.getOrdersByUserId(userId);
+        const orders = await orderDAO.getOrdersByUserId(userId);
     
-        if (!order) throw new NotFoundException('Orders not found for the given user ID');
+        if (!orders) throw new NotFoundException('Orders not found for the given user ID');
 
-        return order;
+        return orders;
     }
 
     createOrder = async (data) => {
