@@ -77,7 +77,7 @@ class OrderService {
 
         order.state = "pending to deliver";
 
-        const payedOrder = orderDAO.updateOrder(id, order);
+        const payedOrder = await orderDAO.updateOrder(id, order);
 
         this.notifyUpdatedOrderState(
             "francopietrantuono999@gmail.com",
