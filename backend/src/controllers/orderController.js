@@ -55,8 +55,9 @@ class OrderController {
     
     payOrder = async (request, response) => {
         const { id } = request.params;
+        const userIdFromToken = request.user.id;
 
-        await this.orderService.payOrder(id);
+        await this.orderService.payOrder(id, userIdFromToken);
 
         return response
             .status(200)
@@ -68,8 +69,9 @@ class OrderController {
 
     cancelOrder = async (request, response) => {
         const { id } = request.params;
+        const userIdFromToken = request.user.id;
 
-        await this.orderService.cancelOrder(id);
+        await this.orderService.cancelOrder(id, userIdFromToken);
 
         return response
             .status(200)

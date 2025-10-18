@@ -67,12 +67,18 @@ class OrderService {
         return createdOrder;
     };
 
-    payOrder = async (id) => {
+    payOrder = async (id, userIdFromToken) => {
         if (!id) throw new BadRequestException('Order ID is required');
         
+        if (!userIdFromToken) throw new BadRequestException('User ID is required to cancel the order');
+
         const order = await orderDAO.getOrderById(id);
         
         if (!order) throw new NotFoundException('Orders not found for the given user ID');
+
+        if (order.user._id.toString() !== userIdFromToken) {
+            throw new ForbiddenException('You are not authorized to cancel this order');
+        }
 
         if(order.state !== "waiting for payment") {
             throw new BadRequestException(`Only orders in 'waiting for payment' state can be payed.`);
@@ -91,7 +97,7 @@ class OrderService {
         );
 
         const notifyData = {
-            to: "francopietrantuono999@gmail.com",
+            to: order.user.email,
             subject: "Order Later - Orden de compra pagada",
             title: "Tu orden ha sido pagada correctamente.",
             body: "Le informamos que el pago de su orden en Order Later ha sido exitoso. Le informaremos sobre el estado de su compra cuando se aproxime la fecha de entrega.",
@@ -104,12 +110,18 @@ class OrderService {
         return payedOrder;
     }
 
-    cancelOrder = async (id) => {
+    cancelOrder = async (id, userIdFromToken) => {
         if (!id) throw new BadRequestException('Order ID is required');
         
+        if (!userIdFromToken) throw new BadRequestException('User ID is required to cancel the order');
+
         const order = await orderDAO.getOrderById(id);
         
         if (!order) throw new NotFoundException('Orders not found for the given user ID');
+
+        if (order.user._id.toString() !== userIdFromToken) {
+            throw new ForbiddenException('You are not authorized to cancel this order');
+        }
 
         if(order.state !== "waiting to approve" && order.state !== "waiting for payment") {
             throw new BadRequestException(`Only orders in 'waiting for approve' or 'waiting for payment' state can be payed.`);
@@ -120,7 +132,7 @@ class OrderService {
         const cancelledOrder = await orderDAO.updateOrder(id, order);
 
         const notifyData = {
-            to: "francopietrantuono999@gmail.com",
+            to: order.user.email,
             subject: "Order Later - Orden de compra cancelada",
             title: "Tu orden ha sido cancelada correctamente.",
             body: "Le informamos que su orden de compra en Order Later ha sido cancelada exitosamente.",
