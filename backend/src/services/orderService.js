@@ -9,7 +9,7 @@ const BadRequestException = require('../exceptions/BadRequestException');
 const ForbiddenException = require('../exceptions/ForbiddenException');
 
 class OrderService {
-    constructor(productService, emailService, shopService){
+    constructor(productService, emailService, shopService) {
         this.productService = productService;
         this.emailService = emailService;
         this.shopService = shopService;
@@ -25,6 +25,14 @@ class OrderService {
         const orders = await orderDAO.getOrdersByUserId(userId);
 
         return orders || [];
+    }
+
+    getOrderById = async (id) => {
+        const order = await orderDAO.findOrderById(id);
+    
+        if (!order) throw new NotFoundException('No order found with this ID');
+    
+        return order;
     }
 
     createOrder = async (data) => {

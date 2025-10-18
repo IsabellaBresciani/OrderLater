@@ -40,6 +40,19 @@ class OrderController {
             });
     }
 
+    getOrderById = async (request, response) => {
+        const{ id } = request.params;
+        const order = await this.orderService.getOrderById(id);
+
+        return response
+        .status(200)
+        .json({ 
+            status: 'Success',
+            message: 'Order successfully retrieved',
+            data: { order }
+        });
+    };
+
     createOrder = async (request, response) => {
         
         const dto = request.body;
