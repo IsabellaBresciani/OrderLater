@@ -1,3 +1,4 @@
+const BadRequestException = require('../exceptions/BadRequestException');
 const orderService = require('../services/orderService'); 
 const Actions = require('../constants/Actions.js');
 
@@ -79,6 +80,24 @@ class OrderController {
                 status: 'Success',
                 message: 'Order cancelled successfully',
             });
+    };
+    
+    getShopOrders = async (request, response) => {  
+        const shop_id = request.params.id;
+        const user_id = request.user.userId;
+
+        if (!shop_id) 
+            throw new BadRequestException('Shop ID is required');
+        
+        const orders = await this.orderService.getShopOrders(shop_id, user_id);
+
+        return response
+        .status(200)
+        .json({ 
+            status: 'Success',
+            message: 'Orders successfully retrieved',
+            data: orders
+        });
     }
 }
 

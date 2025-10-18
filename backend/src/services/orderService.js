@@ -202,6 +202,21 @@ class OrderService {
             body: htmlBody
         });
     }
+
+    getShopOrders = async (shop_id, owner_id) => {
+        const shop = await this.shopService.getShopById(shop_id);
+
+        if (!shop.checkOwner(shop, owner_id)) {
+            throw new ForbiddenException('Shop does not belong to the user with the provided ID');
+        }
+
+        const serach_filter = { shop: shop_id };
+        const fields = "total total_discount user shop deliver_date state createdAt updatedAt";
+
+        const orders = await orderDAO.searchShops(serach_filter, fields);
+
+        return orders.map(shopOwnerPopulateOrderActions);
+    }
 }
 
 function calculateTotalPrice(items) {
@@ -226,6 +241,35 @@ function applyDiscount(advance_in_days, deliver_date){
     const timeDiff = deliverDate.getTime() - currentDate.getTime();
     const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
     return daysDiff >= advance_in_days;
+}
+
+function shopOwnerPopulateOrderActions(order) {
+    const actions = ['view_details'];
+
+    if (order.state === 'waiting to approve') {
+        actions.push('approve', 'reject');
+    }
+
+    if (order.state === 'waiting for payment') {
+        actions.push('cancel');
+    }
+
+    if (order.state === 'pending to deliver') {
+        actions.push('deliver');
+    }
+
+    if (order.state === 'completed') {
+        actions.push('delete');
+    }
+
+    if (order.state === 'rejected' || order.state === 'cancelled') {
+        actions.push('delete');
+    }
+    
+    return {
+        ...order._doc,
+        actions: actions
+    };
 }
 
 module.exports = new OrderService(productService, emailService, shopService);
