@@ -79,8 +79,6 @@ class OrderService {
 
     payOrder = async (id, userIdFromToken) => {
         if (!id) throw new BadRequestException('Order ID is required');
-        
-        if (!userIdFromToken) throw new BadRequestException('User ID is required to cancel the order');
 
         const order = await orderDAO.getOrderById(id);
         
@@ -114,8 +112,6 @@ class OrderService {
 
     cancelOrder = async (id, userIdFromToken) => {
         if (!id) throw new BadRequestException('Order ID is required');
-        
-        if (!userIdFromToken) throw new BadRequestException('User ID is required to cancel the order');
 
         const order = await orderDAO.getOrderById(id);
         
