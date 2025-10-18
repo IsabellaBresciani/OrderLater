@@ -7,7 +7,7 @@ const getShopOrders = async (shopId, token) => {
     const response = await axios.get(`${BASE_URL}/orders/shops/${shopId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    return response.data.data; 
+    return response.data.data; // el backend devuelve { data: orders }
   } catch (error) {
     console.error("Error fetching shop orders:", error);
     throw error;
