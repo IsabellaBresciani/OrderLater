@@ -71,7 +71,7 @@ function OrderForm(shopId) {
   const [calculatedItems, setCalculatedItems] = useState([]);
   const [orderTotals, setOrderTotals] = useState({ subtotal: 0, discount: 0, total: 0 });
   const [isSubmitting, setIsSubmitting] = useState(false); // New state to manage form submission status
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, authToken } = useContext(AuthContext);
 
   useEffect(() => {
     let subtotal = 0;
@@ -92,7 +92,7 @@ function OrderForm(shopId) {
       subtotal += (item.price ?? 0) * item.quantity;
       totalDiscount += itemDiscount;
       return { ...item, appliedDiscount: itemDiscount };
-    });
+    }, []);
 
     setCalculatedItems(itemsWithCalculations);
     setOrderTotals({
@@ -117,7 +117,7 @@ function OrderForm(shopId) {
     setIsSubmitting(true);
 
     try {
-      if (!currentUser._id) {
+      if (!currentUser.id) {
         toast.error('Debes iniciar sesión antes de enviar la orden.');
         setIsSubmitting(false);
         return;
@@ -129,7 +129,7 @@ function OrderForm(shopId) {
       }
 
       const newOrderData = {
-        user_id: currentUser._id,
+        user_id: currentUser.id,
         shop_id: shopId.shopId,
         products: order.products.map(p => ({
           id: p._id || p.id || p.sku,
@@ -140,7 +140,7 @@ function OrderForm(shopId) {
       };
 
       console.log('Submitting order data:', newOrderData);
-      await orderCreate(newOrderData);
+      await orderCreate(newOrderData, authToken);
       toast.success('Order placed successfully!');
 
       OrderManager.clearOrder();
