@@ -86,6 +86,24 @@ class ShopController {
                 message: 'Shop successfully deleted'
             });
     }
+
+    getShopsByOwner = async (request, response) => {
+        const owner_id = request.params.id;
+        const user_id = request.user.userId;
+
+        if (owner_id.toString() !== user_id.toString())
+            throw new ForbiddenException('You do not have permission to access these shops');   
+        
+        const shops = await this.shopService.getShopsByOwnerId(owner_id);
+
+        return response
+            .status(200)
+            .json({ 
+                status: 'Success',
+                message: 'Shops successfully retrieved',
+                data: shops
+            });
+    }
 }
 
 module.exports = new ShopController(shopService);
