@@ -90,6 +90,17 @@ class OrderService {
             "Order Later - Orden de compra pagada"
         );
 
+        const notifyData = {
+            to: "francopietrantuono999@gmail.com",
+            subject: "Order Later - Orden de compra pagada",
+            title: "Tu orden ha sido pagada correctamente.",
+            body: "Le informamos que el pago de su orden en Order Later ha sido exitoso. Le informaremos sobre el estado de su compra cuando se aproxime la fecha de entrega.",
+            order: payedOrder
+        }
+        
+        this.notifyUpdatedOrderState(notifyData);
+
+
         return payedOrder;
     }
 
@@ -106,26 +117,28 @@ class OrderService {
 
         order.state = "cancelled";
 
-        const payedOrder = await orderDAO.updateOrder(id, order);
+        const cancelledOrder = await orderDAO.updateOrder(id, order);
 
-        this.notifyUpdatedOrderState(
-            "francopietrantuono999@gmail.com",
-            "Tu orden ha sido cancelada correctamente.",
-            "Le informamos que su orden de compra en Order Later ha sido cancelada exitosamente.",
-            payedOrder,
-            "Order Later - Orden de compra cancelada"
-        );
+        const notifyData = {
+            to: "francopietrantuono999@gmail.com",
+            subject: "Order Later - Orden de compra cancelada",
+            title: "Tu orden ha sido cancelada correctamente.",
+            body: "Le informamos que su orden de compra en Order Later ha sido cancelada exitosamente.",
+            order: cancelledOrder
+        }
 
-        return payedOrder;
+        this.notifyUpdatedOrderState(notifyData);
+
+        return cancelledOrder;
     }
 
-    notifyUpdatedOrderState(toUserEmail = "francopietrantuono999@gmail.com", title, description, order, subject) {
+    notifyUpdatedOrderState(notifyData) {
         const templateSource = fs.readFileSync('src/templates/email/updated_order_state_template.html', 'utf8');
         const template = handlebars.compile(templateSource);
 
         const emailData = {
-            title,
-            description,
+            title: notifyData.title,
+            description: notifyData.body,
             userName: order.user_name || 'Usuario',
             products: order.items.map(item => ({
                 name: item.name,
@@ -143,8 +156,8 @@ class OrderService {
         const htmlBody = template(emailData);
 
         return this.emailService.sendEmail({
-            to: toUserEmail,
-            subject: subject,
+            to: notifyData.to,
+            subject: notifyData.subject,
             body: htmlBody
         });
     }
