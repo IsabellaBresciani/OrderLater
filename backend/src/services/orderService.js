@@ -23,10 +23,8 @@ class OrderService {
         }
 
         const orders = await orderDAO.getOrdersByUserId(userId);
-    
-        if (!orders) throw new NotFoundException('Orders not found for the given user ID');
 
-        return orders;
+        return orders || [];
     }
 
     createOrder = async (data) => {
