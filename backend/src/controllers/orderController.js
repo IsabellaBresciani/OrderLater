@@ -12,32 +12,15 @@ class OrderController {
         const userId = request.params.id;
         const userIdFromToken = request.user.id;
 
-        const orders = await this.orderService.getOrdersByUserId(userId, userIdFromToken);
-        
-
-        ordersToSend = orders.map(order => ({
-            id: order._id,
-            total: order.total,
-            total_discount: order.total_discount,
-            shop_name: order.shop.name,
-            state: order.state,
-            actions:
-                order.state === 'waiting to approve' ? 
-                    [ Actions.CANCEL ]
-                : order.state === 'waiting for payment' ?
-                    [ Actions.PAY, Actions.CANCEL ]
-                :     
-                    [],
-            delivery_date: order.deliver_date
-        }));
+        const ordersWithActions = await this.orderService.getOrdersByUserId(userId, userIdFromToken);
 
         return response
-            .status(200)
-            .json({ 
-                status: 'Success',
-                message: 'Orders retrieved successfully',
-                data: { ordersToSend }
-            });
+        .status(200)
+        .json({ 
+            status: 'Success',
+            message: 'Orders retrieved successfully',
+            data: { ordersWithActions }
+        });
     }
 
     getOrderById = async (request, response) => {

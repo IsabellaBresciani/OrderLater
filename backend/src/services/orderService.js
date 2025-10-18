@@ -16,7 +16,7 @@ class OrderService {
     }
 
     getOrdersByUserId = async (userId, userIdFromToken) => {
-        if (!userId && !userIdFromToken) throw new BadRequestException('User ID is required');
+        if (!userId) throw new BadRequestException('User ID is required');
 
         if (userId !== userIdFromToken ) {
             throw new ForbiddenException('You are not authorized to view these orders');
@@ -24,9 +24,11 @@ class OrderService {
 
         const orders = await orderDAO.getOrdersByUserId(userId);
 
-        return orders || [];
-    }
+        const ordersWithActions = orders.map(shopClientPopulateOrderActions);
 
+        return ordersWithActions || [];
+    }
+    
     getOrderById = async (id) => {
         const order = await orderDAO.findOrderById(id);
     
@@ -85,7 +87,7 @@ class OrderService {
         if (!order) throw new NotFoundException('Orders not found for the given user ID');
 
         if (order.user._id.toString() !== userIdFromToken) {
-            throw new ForbiddenException('You are not authorized to cancel this order');
+            throw new ForbiddenException('You are not authorized to pay this order');
         }
 
         if(order.state !== "waiting for payment") {
@@ -95,14 +97,6 @@ class OrderService {
         order.state = "pending to deliver";
 
         const payedOrder = await orderDAO.updateOrder(id, order);
-
-        this.notifyUpdatedOrderState(
-            "francopietrantuono999@gmail.com",
-            "Tu orden ha sido pagada correctamente.",
-            "Le informamos que el pago de su orden en Order Later ha sido exitoso. Le informaremos sobre el estado de su compra cuando se aproxime la fecha de entrega.",
-            payedOrder,
-            "Order Later - Orden de compra pagada"
-        );
 
         const notifyData = {
             to: order.user.email,
@@ -274,6 +268,23 @@ function shopOwnerPopulateOrderActions(order) {
         actions.push('delete');
     }
     
+    return {
+        ...order._doc,
+        actions: actions
+    };
+}
+
+function shopClientPopulateOrderActions(order) {
+    const actions = ['view_details'];
+
+    if (order.state === 'waiting to approve') {
+        actions.push('cancel');
+    }
+
+    if (order.state === 'waiting for payment') {
+        actions.push('cancel', 'pay');
+    }
+
     return {
         ...order._doc,
         actions: actions
