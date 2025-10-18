@@ -9,8 +9,9 @@ class OrderController {
     
     getOrdersByUserId = async (request, response) => {
         const userId = request.params.id;
+        const userIdFromToken = request.user.id;
 
-        const orders = await this.orderService.getOrdersByUserId(userId);
+        const orders = await this.orderService.getOrdersByUserId(userId, userIdFromToken);
         
 
         ordersToSend = orders.map(order => ({

@@ -6,6 +6,7 @@ const NotFoundException = require('../exceptions/NotFoundException');
 const fs = require('fs');
 const handlebars = require('handlebars');
 const BadRequestException = require('../exceptions/BadRequestException');
+const ForbiddenException = require('../exceptions/ForbiddenException');
 
 class OrderService {
     constructor(productService, emailService, shopService){
@@ -14,8 +15,12 @@ class OrderService {
         this.shopService = shopService;
     }
 
-    getOrdersByUserId = async (userId) => {
-        if (!userId) throw new BadRequestException('User ID is required');
+    getOrdersByUserId = async (userId, userIdFromToken) => {
+        if (!userId && !userIdFromToken) throw new BadRequestException('User ID is required');
+
+        if (userId !== userIdFromToken ) {
+            throw new ForbiddenException('You are not authorized to view these orders');
+        }
 
         const orders = await orderDAO.getOrdersByUserId(userId);
     
