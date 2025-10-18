@@ -101,7 +101,7 @@ class ShopService {
         return shopDao.deleteShop(id);
     }
 
-    async getShopsByOwner(owner_id) {
+    async getShopsByOwnerId(owner_id) {
         const shops = await shopDao.findShopsByOwner(owner_id);
         return shops;
     }

@@ -89,19 +89,19 @@ class ShopController {
 
     getShopsByOwner = async (request, response) => {
         const owner_id = request.params.id;
-        const user_id = request.user.id;
+        const user_id = request.user.userId;
 
         if (owner_id.toString() !== user_id.toString())
             throw new ForbiddenException('You do not have permission to access these shops');   
         
-        const shops = await this.shopService.getShopsByOwnerId(id);
+        const shops = await this.shopService.getShopsByOwnerId(owner_id);
 
         return response
             .status(200)
             .json({ 
                 status: 'Success',
                 message: 'Shops successfully retrieved',
-                shops: shops
+                data: shops
             });
     }
 }

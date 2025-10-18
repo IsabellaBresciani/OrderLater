@@ -9,7 +9,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 router.get('/', asyncHandler(shopController.getAllShops));
 router.get('/:id', asyncHandler(shopController.getShopById));
-router.get('/owner/:id', authMiddleware, asyncHandler(shopController.getShopsByOwner));
+router.get('/users/:id', authMiddleware, asyncHandler(shopController.getShopsByOwner));
 router.get('/:id/products', asyncHandler(shopController.getShopProducts));
 router.post('/', authMiddleware, asyncHandler(shopController.createShop));
 router.put('/:id', authMiddleware, asyncHandler(shopController.updateShop));
