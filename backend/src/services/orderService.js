@@ -15,6 +15,18 @@ class OrderService {
         this.shopService = shopService;
     }
 
+    getOrdersByUserId = async (userId, userIdFromToken) => {
+        if (!userId && !userIdFromToken) throw new BadRequestException('User ID is required');
+
+        if (userId !== userIdFromToken ) {
+            throw new ForbiddenException('You are not authorized to view these orders');
+        }
+
+        const orders = await orderDAO.getOrdersByUserId(userId);
+
+        return orders || [];
+    }
+
     createOrder = async (data) => {
         
         if (!data.user_id) throw new NotFoundException('User not found');
@@ -54,6 +66,113 @@ class OrderService {
         
         return createdOrder;
     };
+
+    payOrder = async (id, userIdFromToken) => {
+        if (!id) throw new BadRequestException('Order ID is required');
+        
+        if (!userIdFromToken) throw new BadRequestException('User ID is required to cancel the order');
+
+        const order = await orderDAO.getOrderById(id);
+        
+        if (!order) throw new NotFoundException('Orders not found for the given user ID');
+
+        if (order.user._id.toString() !== userIdFromToken) {
+            throw new ForbiddenException('You are not authorized to cancel this order');
+        }
+
+        if(order.state !== "waiting for payment") {
+            throw new BadRequestException(`Only orders in 'waiting for payment' state can be payed.`);
+        }
+
+        order.state = "pending to deliver";
+
+        const payedOrder = await orderDAO.updateOrder(id, order);
+
+        this.notifyUpdatedOrderState(
+            "francopietrantuono999@gmail.com",
+            "Tu orden ha sido pagada correctamente.",
+            "Le informamos que el pago de su orden en Order Later ha sido exitoso. Le informaremos sobre el estado de su compra cuando se aproxime la fecha de entrega.",
+            payedOrder,
+            "Order Later - Orden de compra pagada"
+        );
+
+        const notifyData = {
+            to: order.user.email,
+            subject: "Order Later - Orden de compra pagada",
+            title: "Tu orden ha sido pagada correctamente.",
+            body: "Le informamos que el pago de su orden en Order Later ha sido exitoso. Le informaremos sobre el estado de su compra cuando se aproxime la fecha de entrega.",
+            order: payedOrder
+        }
+        
+        this.notifyUpdatedOrderState(notifyData);
+
+
+        return payedOrder;
+    }
+
+    cancelOrder = async (id, userIdFromToken) => {
+        if (!id) throw new BadRequestException('Order ID is required');
+        
+        if (!userIdFromToken) throw new BadRequestException('User ID is required to cancel the order');
+
+        const order = await orderDAO.getOrderById(id);
+        
+        if (!order) throw new NotFoundException('Orders not found for the given user ID');
+
+        if (order.user._id.toString() !== userIdFromToken) {
+            throw new ForbiddenException('You are not authorized to cancel this order');
+        }
+
+        if(order.state !== "waiting to approve" && order.state !== "waiting for payment") {
+            throw new BadRequestException(`Only orders in 'waiting for approve' or 'waiting for payment' state can be payed.`);
+        }
+
+        order.state = "cancelled";
+
+        const cancelledOrder = await orderDAO.updateOrder(id, order);
+
+        const notifyData = {
+            to: order.user.email,
+            subject: "Order Later - Orden de compra cancelada",
+            title: "Tu orden ha sido cancelada correctamente.",
+            body: "Le informamos que su orden de compra en Order Later ha sido cancelada exitosamente.",
+            order: cancelledOrder
+        }
+
+        this.notifyUpdatedOrderState(notifyData);
+
+        return cancelledOrder;
+    }
+
+    notifyUpdatedOrderState(notifyData) {
+        const templateSource = fs.readFileSync('src/templates/email/updated_order_state_template.html', 'utf8');
+        const template = handlebars.compile(templateSource);
+
+        const emailData = {
+            title: notifyData.title,
+            description: notifyData.body,
+            userName: order.user_name || 'Usuario',
+            products: order.items.map(item => ({
+                name: item.name,
+                quantity: item.quantity,
+                unit_price: item.unit_price,
+                subtotal: item.subtotal,
+                discount: item.discount,
+                subtotalBeforeDiscount: item.subtotalBeforeDiscount
+            })),
+            total: order.total.toFixed(2),
+            deliverDate: order.deliver_date,
+            year: new Date().getFullYear()
+        };
+
+        const htmlBody = template(emailData);
+
+        return this.emailService.sendEmail({
+            to: notifyData.to,
+            subject: notifyData.subject,
+            body: htmlBody
+        });
+    }
 
     notifyCreatedOrderToUser(order) {
         const templateSource = fs.readFileSync('src/templates/email/created_order_template.html', 'utf8');
