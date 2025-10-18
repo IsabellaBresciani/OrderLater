@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import React from 'react'; 
+import NavBar from '../components/NavBar';
 
 const PrivateRoute = ({ children, requiredRoles = [] }) => {
 
@@ -13,7 +14,12 @@ const PrivateRoute = ({ children, requiredRoles = [] }) => {
     return <Navigate to="/unauthorized" />; 
   }
 
-  return children;
+  return (
+  <>
+    <NavBar role={currentUser.role} />
+    {children}
+  </>
+  );
 };
 
 export default PrivateRoute;
