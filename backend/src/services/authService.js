@@ -2,19 +2,24 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const BadRequestException = require('../exceptions/BadRequestException.js');
 const userDao = require('../daos/userDao');
-const { stringify } = require('yamljs');
+const NotFoundException = require('../exceptions/NotFoundException.js');
 require('dotenv').config();
 
 class AuthService {
     
-    async getUser(email, inputPassword){
+    async getUser(email){
         const user = await userDao.findUserByEmail(email);
-        if (!user) throw new BadRequestException('Invalid Credentials');
-         const passwordMatches = bcrypt.compareSync(inputPassword, user.password);
+        if (!user) throw new NotFoundException('User not found');
 
-        if (!passwordMatches) throw new BadRequestException('Invalid Credentials');
-        
-        return user
+         const userDTO = {
+            id: user.id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            role: user.role || "user"
+        };
+
+        return userDTO
     }
 
     async generateAuthToken(email, inputPassword) {
