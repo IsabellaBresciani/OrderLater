@@ -6,6 +6,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 //--------------------------------  ENDPOINTS  --------------------------------
 
+router.get('/:id', authMiddleware, asyncHandler(OrderController.getOrderById));
 router.post('/', asyncHandler(OrderController.createOrder));
 router.get('/shops/:id', authMiddleware, asyncHandler(OrderController.getShopOrders));
 
