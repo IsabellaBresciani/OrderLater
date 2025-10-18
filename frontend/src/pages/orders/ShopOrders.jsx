@@ -1,6 +1,6 @@
 // src/pages/orders/ShopOrders.jsx
 import React, { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import getShopOrders from "../../services/getShopOrders.js";
 import OrdersTable from "../../components/order/OrdersTable.jsx";
 import { AuthContext } from "../../context/AuthContext.jsx";
@@ -10,6 +10,7 @@ import baseURL from "../../services/baseURL.js";
 
 const ShopOrders = () => {
   const { shopId } = useParams();
+  const navigate = useNavigate();
   const { authToken, currentUser } = useContext(AuthContext);
   const [orders, setOrders] = useState([]);
   const [shopName, setShopName] = useState("");
@@ -26,12 +27,12 @@ const ShopOrders = () => {
 
     const fetchData = async () => {
       try {
-        // 1️⃣ Get orders for this shop
+        
         const ordersData = await getShopOrders(shopId, authToken);
         setOrders(ordersData);
 
-        // 2️⃣ Get shop name (filter locally)
-        const shopRes = await axios.get(`${baseURL}/shops`, {
+       
+        const shopRes = await axios.get(`${baseURL()}/api/shops`, {
           headers: { Authorization: `Bearer ${authToken}` },
         });
 
@@ -81,7 +82,7 @@ const ShopOrders = () => {
               <div className="modal-footer justify-content-center">
                 <button
                   className="btn btn-primary"
-                  onClick={() => (window.location.href = "/")}
+                  onClick={() => (navigate(-1))}
                 >
                   Go Back
                 </button>

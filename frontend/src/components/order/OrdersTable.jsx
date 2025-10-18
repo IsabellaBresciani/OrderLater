@@ -19,6 +19,7 @@ const OrdersTable = ({ orders }) => {
         <thead style={{ backgroundColor: "#0d6efd", color: "white" }}>
           <tr>
             <th style={{ padding: "0.75rem" }}>#</th>
+            <th style={{ padding: "0.75rem" }}>User</th>
             <th style={{ padding: "0.75rem" }}>Total</th>
             <th style={{ padding: "0.75rem" }}>Order Date</th>
             <th style={{ padding: "0.75rem" }}>Delivery Date</th>
@@ -43,6 +44,12 @@ const OrdersTable = ({ orders }) => {
               >
                 <td style={{ padding: "0.75rem" }}>
                   <strong>#{index + 1}</strong>
+                </td>
+                <td style={{ padding: "0.75rem" }}>
+                  {order.user
+                    ? `${order.user.first_name || ""} ${order.user.last_name || ""}`.trim() ||
+                      order.user.email
+                    : "Unknown"}
                 </td>
                 <td style={{ padding: "0.75rem" }}>
                   ${order.total?.toFixed(2) ?? "0.00"}
