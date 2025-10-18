@@ -33,4 +33,12 @@ const shopSchema = new mongoose.Schema({
     timestamps: true,
 });
 
+shopSchema.methods.checkOwner = function(shop, owner_id) {
+    const owner = shop.owner._id.toString('hex');
+    if (owner !== owner_id.toString()) {
+        return false;
+    }
+    return true;
+}
+
 module.exports = mongoose.model('Shop', shopSchema);

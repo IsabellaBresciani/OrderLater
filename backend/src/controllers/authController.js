@@ -12,14 +12,15 @@ class AuthController {
 
         const { email, password } = request.body;
     
-        if (!email || !password) throw new BadRequestException('Email and password required');
+        if (!email || !password) 
+            throw new BadRequestException('Email and password required');
 
         if (!process.env.JWT_SECRET) 
             throw new InternalServerExcepcion('JWT secret key missing in current enviorment');
 
         const authToken = await this.authService.generateAuthToken(email, password);
         const currentUser = await this.authService.getUser(email, password);
-  
+
         return response
         .status(200)
         .json({ 
