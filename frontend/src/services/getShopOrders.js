@@ -1,4 +1,3 @@
-// src/services/getShopOrders.js
 import axios from "axios";
 import baseURL from "./baseURL.js";
 

@@ -1,4 +1,3 @@
-// src/components/orders/OrdersTable.jsx
 import React from "react";
 import OrderActions from "./OrderActions.jsx";
 
@@ -16,22 +15,39 @@ const OrdersTable = ({ orders }) => {
           minWidth: "800px",
         }}
       >
-        <thead style={{ backgroundColor: "#0d6efd", color: "white" }}>
-          <tr>
-            <th style={{ padding: "0.75rem" }}>#</th>
-            <th style={{ padding: "0.75rem" }}>User</th>
-            <th style={{ padding: "0.75rem" }}>Total</th>
-            <th style={{ padding: "0.75rem" }}>Order Date</th>
-            <th style={{ padding: "0.75rem" }}>Delivery Date</th>
-            <th style={{ padding: "0.75rem" }}>Status</th>
-            <th style={{ padding: "0.75rem" }}>Actions</th>
+        {/* ✅ Header con color forzado */}
+        <thead>
+          <tr style={{ backgroundColor: "#0d6efd" }}>
+            {[
+              "#",
+              "User",
+              "Total",
+              "Order Date",
+              "Delivery Date",
+              "Status",
+              "Actions",
+            ].map((header, idx) => (
+              <th
+                key={idx}
+                style={{
+                  padding: "0.75rem",
+                  color: "white",
+                  backgroundColor: "#0d6efd", 
+                  fontWeight: "600",
+                }}
+              >
+                {header}
+              </th>
+            ))}
           </tr>
         </thead>
 
         <tbody>
           {orders.map((order, index) => {
             const orderDate = new Date(order.createdAt);
-            const deliveryDate = new Date(order.delivery_date || order.deliver_date);
+            const deliveryDate = new Date(
+              order.delivery_date || order.deliver_date
+            );
 
             return (
               <tr
@@ -47,8 +63,9 @@ const OrdersTable = ({ orders }) => {
                 </td>
                 <td style={{ padding: "0.75rem" }}>
                   {order.user
-                    ? `${order.user.first_name || ""} ${order.user.last_name || ""}`.trim() ||
-                      order.user.email
+                    ? `${order.user.first_name || ""} ${
+                        order.user.last_name || ""
+                      }`.trim() || order.user.email
                     : "Unknown"}
                 </td>
                 <td style={{ padding: "0.75rem" }}>
@@ -61,7 +78,7 @@ const OrdersTable = ({ orders }) => {
                   {deliveryDate.toLocaleDateString()}
                 </td>
                 <td style={{ padding: "0.75rem" }}>
-                  <span className="badge bg-primary text-capitalize">
+                  <span className="badge bg-primary text-capitalize fs-6">
                     {order.state}
                   </span>
                 </td>
