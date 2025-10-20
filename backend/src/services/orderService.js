@@ -101,8 +101,9 @@ class OrderService {
 
         const serach_filter = { shop: shop_id };
         const fields = "total total_discount user shop deliver_date state createdAt updatedAt";
+        const populateFields = [{ path: 'user', select: 'first_name last_name email' }]
 
-        const orders = await orderDAO.searchShops(serach_filter, fields);
+        const orders = await orderDAO.searchShops(serach_filter, fields, populateFields);
 
         return orders.map(shopOwnerPopulateOrderActions);
     }
