@@ -9,12 +9,26 @@ const BadRequestException = require('../exceptions/BadRequestException');
 const ForbiddenException = require('../exceptions/ForbiddenException');
 
 class OrderService {
-    constructor(productService, emailService, shopService){
+    constructor(productService, emailService, shopService) {
         this.productService = productService;
         this.emailService = emailService;
         this.shopService = shopService;
     }
 
+    getOrdersByUserId = async (userId, userIdFromToken) => {
+        if (!userId) throw new BadRequestException('User ID is required');
+
+        if (userId !== userIdFromToken ) {
+            throw new ForbiddenException('You are not authorized to view these orders');
+        }
+
+        const orders = await orderDAO.getOrdersByUserId(userId);
+
+        const ordersWithActions = orders.map(shopClientPopulateOrderActions);
+
+        return ordersWithActions || [];
+    }
+    
     getOrderById = async (id) => {
         const order = await orderDAO.findOrderById(id);
     
@@ -62,6 +76,101 @@ class OrderService {
         
         return createdOrder;
     };
+
+    payOrder = async (id, userIdFromToken) => {
+        if (!id) throw new BadRequestException('Order ID is required');
+
+        const order = await orderDAO.getOrderById(id);
+        
+        if (!order) throw new NotFoundException('Orders not found for the given user ID');
+
+        if (order.user._id.toString() !== userIdFromToken) {
+            throw new ForbiddenException('You are not authorized to pay this order');
+        }
+
+        if(order.state !== "waiting for payment") {
+            throw new BadRequestException(`Only orders in 'waiting for payment' state can be payed.`);
+        }
+
+        order.state = "pending to deliver";
+
+        const payedOrder = await orderDAO.updateOrder(id, order);
+
+        const notifyData = {
+            to: order.user.email,
+            subject: "Order Later - Orden de compra pagada",
+            title: "Tu orden ha sido pagada correctamente.",
+            body: "Le informamos que el pago de su orden en Order Later ha sido exitoso. Le informaremos sobre el estado de su compra cuando se aproxime la fecha de entrega.",
+            order: payedOrder
+        }
+        
+        this.notifyUpdatedOrderState(notifyData);
+
+
+        return payedOrder;
+    }
+
+    cancelOrder = async (id, userIdFromToken) => {
+        if (!id) throw new BadRequestException('Order ID is required');
+
+        const order = await orderDAO.getOrderById(id);
+        
+        if (!order) throw new NotFoundException('Orders not found for the given user ID');
+
+        if (order.user._id.toString() !== userIdFromToken) {
+            throw new ForbiddenException('You are not authorized to cancel this order');
+        }
+
+        if(order.state !== "waiting to approve" && order.state !== "waiting for payment") {
+            throw new BadRequestException(`Only orders in 'waiting for approve' or 'waiting for payment' state can be payed.`);
+        }
+
+        order.state = "cancelled";
+
+        const cancelledOrder = await orderDAO.updateOrder(id, order);
+
+        const notifyData = {
+            to: order.user.email,
+            subject: "Order Later - Orden de compra cancelada",
+            title: "Tu orden ha sido cancelada correctamente.",
+            body: "Le informamos que su orden de compra en Order Later ha sido cancelada exitosamente.",
+            order: cancelledOrder
+        }
+
+        this.notifyUpdatedOrderState(notifyData);
+
+        return cancelledOrder;
+    }
+
+    notifyUpdatedOrderState(notifyData) {
+        const templateSource = fs.readFileSync('src/templates/email/updated_order_state_template.html', 'utf8');
+        const template = handlebars.compile(templateSource);
+
+        const emailData = {
+            title: notifyData.title,
+            description: notifyData.body,
+            userName: order.user_name || 'Usuario',
+            products: order.items.map(item => ({
+                name: item.name,
+                quantity: item.quantity,
+                unit_price: item.unit_price,
+                subtotal: item.subtotal,
+                discount: item.discount,
+                subtotalBeforeDiscount: item.subtotalBeforeDiscount
+            })),
+            total: order.total.toFixed(2),
+            deliverDate: order.deliver_date,
+            year: new Date().getFullYear()
+        };
+
+        const htmlBody = template(emailData);
+
+        return this.emailService.sendEmail({
+            to: notifyData.to,
+            subject: notifyData.subject,
+            body: htmlBody
+        });
+    }
 
     notifyCreatedOrderToUser(order) {
         const templateSource = fs.readFileSync('src/templates/email/created_order_template.html', 'utf8');
@@ -156,6 +265,23 @@ function shopOwnerPopulateOrderActions(order) {
         actions.push('delete');
     }
     
+    return {
+        ...order._doc,
+        actions: actions
+    };
+}
+
+function shopClientPopulateOrderActions(order) {
+    const actions = ['view_details'];
+
+    if (order.state === 'waiting to approve') {
+        actions.push('cancel');
+    }
+
+    if (order.state === 'waiting for payment') {
+        actions.push('cancel', 'pay');
+    }
+
     return {
         ...order._doc,
         actions: actions
