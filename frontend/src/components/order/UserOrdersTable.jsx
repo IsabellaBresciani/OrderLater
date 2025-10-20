@@ -1,7 +1,7 @@
 import React from "react";
 import OrderActions from "./OrderActions.jsx";
 
-const UserOrdersTable = ({ orders }) => {
+const UserOrdersTable = ({ orders, refreshOrders }) => {
   if (!orders || orders.length === 0)
     return <p className="text-center mt-4 text-muted">No orders found.</p>;
 
@@ -39,14 +39,12 @@ const UserOrdersTable = ({ orders }) => {
           {orders.map((order, index) => {
             const orderDate = new Date(order.createdAt);
             const deliveryDate = new Date(order.deliver_date);
-
-            // Seguridad: excluir acciones de vendedor
             const safeActions = order.actions?.filter(
               (a) => !["approve", "reject"].includes(a)
             );
 
             return (
-              <tr key={order.id || order._id}>
+              <tr key={order._id || order.id}>
                 <td><strong>#{index + 1}</strong></td>
                 <td>{order.shop_name || order.shop?.name || "Unknown"}</td>
                 <td>${order.total?.toFixed(2)}</td>
@@ -58,7 +56,11 @@ const UserOrdersTable = ({ orders }) => {
                   </span>
                 </td>
                 <td>
-                  <OrderActions actions={safeActions} />
+                  <OrderActions
+                    actions={safeActions}
+                    orderId={order._id || order.id}
+                    refreshOrders={refreshOrders}
+                  />
                 </td>
               </tr>
             );

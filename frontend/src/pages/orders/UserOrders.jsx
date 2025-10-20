@@ -9,18 +9,21 @@ const UserOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchOrders = async () => {
+    try {
+      if (!currentUser?.id) return;
+      setLoading(true);
+      const data = await getUserOrders(currentUser.id, authToken);
+      setOrders(data);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      toast.error("Error fetching your orders");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        if (!currentUser?.id) return;
-        const data = await getUserOrders(currentUser.id, authToken);
-        setOrders(data);
-      } catch (error) {
-        toast.error("Error fetching your orders");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchOrders();
   }, [currentUser, authToken]);
 
@@ -33,7 +36,7 @@ const UserOrders = () => {
           <p className="mt-2 text-muted">Loading your orders...</p>
         </div>
       ) : (
-        <UserOrdersTable orders={orders} />
+        <UserOrdersTable orders={orders} refreshOrders={fetchOrders} />
       )}
     </div>
   );
