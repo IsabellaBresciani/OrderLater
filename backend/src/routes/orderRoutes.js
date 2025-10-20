@@ -8,6 +8,10 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 router.get('/:id', authMiddleware, asyncHandler(OrderController.getOrderById));
 router.post('/', authMiddleware, asyncHandler(OrderController.createOrder));
+router.get('/users/:id', authMiddleware, asyncHandler(OrderController.getOrdersByUserId));
 router.get('/shops/:id', authMiddleware, asyncHandler(OrderController.getShopOrders));
+router.post('/', asyncHandler(OrderController.createOrder));
+router.patch('/pay/:id', authMiddleware, asyncHandler(OrderController.payOrder));
+router.patch('/cancel/:id', authMiddleware, asyncHandler(OrderController.cancelOrder));
 
 module.exports = router;

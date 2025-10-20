@@ -1,17 +1,39 @@
 const  Order = require('../models/Order.js');
 
 class OrderDAO {
+    getOrderById(id) {
+        return Order.findById(id);
+    }
+
+    getOrdersByUserId(userId) {
+        return Order.find({ user: userId });
+    }
+
+    updateOrder(id, updateData) {
+        return Order.findByIdAndUpdate(id, updateData, { new: true });
+    }
 
     createOrder(order) {
         return Order.create(order);
     }
 
-    searchShops(filters = {}, fields = null) {
+    searchShops(filters = {}, fields = null, populateFields = []) {
         const query = { ...filters };
+        let dbQuery = Order.find(query);
+
         if (fields) {
-            return Order.find(query).select(fields).sort({ createdAt: -1 });
+            dbQuery = dbQuery.select(fields);
         }
-        return Order.find(query).sort({ createdAt: -1 });
+
+        populateFields.forEach(field => {
+            if (typeof field === 'object') {
+                dbQuery = dbQuery.populate(field);
+            } else {
+                dbQuery = dbQuery.populate({ path: field });
+            }
+        });
+
+        return dbQuery.sort({ createdAt: -1 });
     }
 }
 
