@@ -32,7 +32,7 @@ const OrdersTable = ({ orders }) => {
                 style={{
                   padding: "0.75rem",
                   color: "white",
-                  backgroundColor: "#0d6efd", 
+                  backgroundColor: "#0d6efd",
                   fontWeight: "600",
                 }}
               >
@@ -63,9 +63,9 @@ const OrdersTable = ({ orders }) => {
                 </td>
                 <td style={{ padding: "0.75rem" }}>
                   {order.user
-                    ? `${order.user.first_name || ""} ${
-                        order.user.last_name || ""
-                      }`.trim() || order.user.email
+                    ? order.user.email ||
+                    `${order.user.first_name || ""} ${order.user.last_name || ""}`.trim() ||
+                    "Unknown"
                     : "Unknown"}
                 </td>
                 <td style={{ padding: "0.75rem" }}>
