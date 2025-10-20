@@ -10,7 +10,7 @@ class OrderController {
     
     getOrdersByUserId = async (request, response) => {
         const userId = request.params.id;
-        const userIdFromToken = request.user.id;
+        const userIdFromToken = request.user.userId;
 
         const ordersWithActions = await this.orderService.getOrdersByUserId(userId, userIdFromToken);
 
