@@ -6,12 +6,23 @@ class OrderDAO {
         return Order.create(order);
     }
 
-    searchShops(filters = {}, fields = null) {
+    searchShops(filters = {}, fields = null, populateFields = []) {
         const query = { ...filters };
+        let dbQuery = Order.find(query);
+
         if (fields) {
-            return Order.find(query).select(fields).sort({ createdAt: -1 });
+            dbQuery = dbQuery.select(fields);
         }
-        return Order.find(query).sort({ createdAt: -1 });
+
+        populateFields.forEach(field => {
+            if (typeof field === 'object') {
+                dbQuery = dbQuery.populate(field);
+            } else {
+                dbQuery = dbQuery.populate({ path: field });
+            }
+        });
+
+        return dbQuery.sort({ createdAt: -1 });
     }
 }
 
