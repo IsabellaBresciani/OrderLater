@@ -14,6 +14,8 @@ import ShopProducts from './pages/shops/ShopProducts.jsx';
 import ProductDetailPage from './pages/products/ProductDetailPage.jsx';
 import OrderCheckout from './pages/orders/OrderCheckout.jsx';
 import ShopList from './pages/shops/ShopList.jsx';
+import ShopOrders from "./pages/orders/ShopOrders.jsx";
+import UserOrders from "./pages/orders/UserOrders.jsx";
 
 function App() {
   return (
@@ -30,6 +32,8 @@ function App() {
           <Route path="/shops/:shopId/products" element={ <PrivateRoute> <ShopProducts /></PrivateRoute>} />
           <Route path="/shops/:shopId/order-checkout" element={<PrivateRoute>  <OrderCheckout />     </PrivateRoute>} />
           <Route path="/shops/:shopId/products/:productId" element={<PrivateRoute><ProductDetailPage /></PrivateRoute>} />
+          <Route path="/shops/:shopId/orders" element={<PrivateRoute><ShopOrders /></PrivateRoute>} />
+          <Route path="/orders" element={<PrivateRoute><UserOrders /></PrivateRoute>} />
         </Routes>
       </Router>
     </AuthProvider>
