@@ -16,7 +16,7 @@ const PrivateRoute = ({ children, requiredRoles = [] }) => {
 
   return (
   <>
-    <NavBar role={currentUser.role} />
+    <NavBar role={currentUser.role}/>
     {children}
   </>
   );

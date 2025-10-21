@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext'; // Adjust the path to your AuthContext file
 
 const NavBar = ({ role }) => {
-  const ownerShops = ['Mi Negocio 1', 'Super Negocio', 'Tienda Rápida'];
+  const ownerShops = ['Mis Shops', "Ordenes"];
+  const { logout } = useContext(AuthContext);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid">
-        {/* Brand/Logo que redirige al inicio */}
-        <Link className="navbar-brand" to="/">Order Later</Link>
+        {/* Brand/Logo that redirects to home */}
+        <Link className="navbar-brand" to="/">
+          Order Later
+        </Link>
 
-        {/* Botón Hamburguesa para móvil */}
+        {/* Hamburger Button for mobile */}
         <button
           className="navbar-toggler"
           type="button"
@@ -23,39 +27,52 @@ const NavBar = ({ role }) => {
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        {/* Contenido Colapsable */}
+        {/* Collapsable Content */}
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav">
-            {/* --- Menú para Cliente (user) --- */}
+          <ul className="navbar-nav me-auto">
+            {/* --- Menu for Client (user) --- */}
             {role === 'user' && (
               <>
                 <li className="nav-item">
-                  <NavLink className="nav-link" to="/shops">Shops</NavLink>
+                  <NavLink className="nav-link" to="/shops">
+                    Shops
+                  </NavLink>
                 </li>
                 <li className="nav-item">
-                  <NavLink className="nav-link" to="/my-orders">Mis Órdenes</NavLink>
+                  <NavLink className="nav-link" to="/orders">
+                    Mis Órdenes
+                  </NavLink>
                 </li>
                 <li className="nav-item">
-                  <NavLink className="nav-link" to="/settings">Configuración</NavLink>
+                  <NavLink className="nav-link" to="/settings">
+                    Configuración
+                  </NavLink>
                 </li>
               </>
             )}
 
-            {/* --- Menú para Owner (business_owner) --- */}
+            {/* --- Menu for Owner (business_owner) --- */}
             {role === 'business_owner' && (
               <>
-                {ownerShops.map((shopName) => (
-                  <li className="nav-item" key={shopName}>
-                    <NavLink
-                      className="nav-link"
-                      to={`/shop/${shopName.replace(/\s+/g, '-').toLowerCase()}`}
-                    >
-                      {shopName}
-                    </NavLink>
-                  </li>
-                ))}
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/shops">
+                    Mis Comercios
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/settings">
+                    Configuración
+                  </NavLink>
+                </li>
               </>
             )}
+          </ul>
+          <ul className="navbar-nav">
+            <li className="nav-item">
+              <button className="btn btn-link nav-link" onClick={logout}>
+                Logout
+              </button>
+            </li>
           </ul>
         </div>
       </div>
