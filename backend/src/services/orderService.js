@@ -147,6 +147,7 @@ class OrderService {
     };
 
     notifyUpdatedOrderState(notifyData) {
+        const { order } = notifyData;
         const templateSource = fs.readFileSync('src/templates/email/updated_order_state_template.html', 'utf8');
         const template = handlebars.compile(templateSource);
 
