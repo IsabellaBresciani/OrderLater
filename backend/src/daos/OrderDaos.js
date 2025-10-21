@@ -6,9 +6,7 @@ class OrderDAO {
     }
 
     getOrdersByUserId(userId) {
-    return Order.find({ user: userId })
-        .populate({ path: 'shop', select: 'name' })  
-        .sort({ createdAt: -1 });                   
+        return Order.find({ user: userId });
     }
 
     updateOrder(id, updateData) {
