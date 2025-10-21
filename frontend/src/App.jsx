@@ -31,7 +31,7 @@ function App() {
           <Route path="/shops/:shopId/products" element={ <PrivateRoute> <ShopProducts /></PrivateRoute>} />
           <Route path="/shops/:shopId/order-checkout" element={<PrivateRoute>  <OrderCheckout />     </PrivateRoute>} />
           <Route path="/shops/:shopId/products/:productId" element={<PrivateRoute><ProductDetailPage /></PrivateRoute>} />
-          <Route path="/my-orders" element={<PrivateRoute><UserOrders /></PrivateRoute>} />
+          <Route path="/orders" element={<PrivateRoute><UserOrders /></PrivateRoute>} />
         </Routes>
       </Router>
     </AuthProvider>
