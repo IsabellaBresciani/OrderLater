@@ -25,6 +25,10 @@ class ShopDAO {
     async deleteShop(id) {
         return await Shop.deleteOne({ _id: id });
     }
+
+    findShopsByOwner(owner) {
+        return Shop.find({ owner });
+    }
 }
 
 module.exports = new ShopDAO();
