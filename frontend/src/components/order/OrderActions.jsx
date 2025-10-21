@@ -1,21 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Button from "../Button.jsx";
+import { AuthContext } from "../../context/AuthContext.jsx";
+import { payOrder, cancelOrder } from "../../services/OrderActions.js";
+import Toast from "../../utils/Toast.js";
 
 const iconMap = {
-  view_details: { icon: "bi-eye", color: "#6c757d" }, // gris
-  approve: { icon: "bi-check-lg", color: "#28a745" }, // verde
-  reject: { icon: "bi-x-lg", color: "#dc3545" }, // rojo
-  pay: { icon: "bi-cash-coin", color: "#0d6efd" }, // azul
-  complete: { icon: "bi-truck", color: "#ffc107" }, // amarillo
-  cancel: { icon: "bi-x-octagon", color: "#fd7e14" }, // naranja
-  delete: { icon: "bi-trash", color: "#f10d0dff" }, // gris
+  view_details: { icon: "bi-eye", color: "#6c757d" },
+  approve: { icon: "bi-check-lg", color: "#28a745" },
+  reject: { icon: "bi-x-lg", color: "#dc3545" },
+  pay: { icon: "bi-cash-coin", color: "#0d6efd" },
+  complete: { icon: "bi-truck", color: "#ffc107" },
+  cancel: { icon: "bi-x-octagon", color: "#FF0000" },
+  delete: { icon: "bi-trash", color: "#f10d0dff" },
 };
 
-const OrderActions = ({ actions }) => {
+const OrderActions = ({ actions, orderId, refreshOrders }) => {
   if (!actions || actions.length === 0) return null;
 
   const [modalOpen, setModalOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState(null);
+  const { authToken } = useContext(AuthContext);
 
   const handleActionClick = (action) => {
     setCurrentAction({
@@ -30,27 +34,70 @@ const OrderActions = ({ actions }) => {
     setCurrentAction(null);
   };
 
-  const handleConfirm = () => {
-    alert(`Action triggered: ${currentAction?.name}`);
-    setModalOpen(false);
-    setCurrentAction(null);
+  const handleConfirm = async () => {
+    try {
+      if (!currentAction) return;
+
+      let response;
+
+      switch (currentAction.name) {
+        case "pay":
+          response = await payOrder(orderId, authToken);
+          Toast({
+            icon: "success",
+            title: response?.message || "Order paid successfully",
+          });
+          break;
+
+        case "cancel":
+          response = await cancelOrder(orderId, authToken);
+          Toast({
+            icon: "warning",
+            title: response?.message || "Order cancelled successfully",
+          });
+          break;
+
+        case "view_details":
+          Toast({
+            icon: "info",
+            title: "Order details feature coming soon",
+          });
+          break;
+
+        default:
+          Toast({ icon: "info", title: "Action not implemented yet" });
+      }
+
+      // 🔄 Actualiza las órdenes sin reload
+      if (refreshOrders) await refreshOrders();
+
+    } catch (error) {
+      console.error("Order action error:", error);
+
+      const status = error.response?.status;
+      const msg =
+        error.response?.data?.message ||
+        (status === 500
+          ? "Server error: please try again later."
+          : "Error performing action");
+
+      Toast({ icon: "error", title: "Error", text: msg });
+    } finally {
+      setModalOpen(false);
+      setCurrentAction(null);
+    }
   };
 
-  // Determinar variante del botón
   const confirmVariant = (() => {
     if (["reject", "delete", "cancel"].includes(currentAction?.name)) {
-      return "danger"; // rojo
+      return "danger";
     }
     if (["approve"].includes(currentAction?.name)) {
-      return "success"; // usaremos verde custom por style
+      return "success";
     }
-    if (["view_details"].includes(currentAction?.name)) {
-      return "primary"; // azul Bootstrap
-    }
-    return "primary"; // por defecto
+    return "primary";
   })();
 
-  
   const customButtonStyle =
     currentAction?.name === "approve"
       ? { backgroundColor: "#0ab432ff", border: "none", color: "#fff" }
@@ -67,7 +114,6 @@ const OrderActions = ({ actions }) => {
             icon: "bi-question",
             color: "#6c757d",
           };
-
           return (
             <button
               key={action}
