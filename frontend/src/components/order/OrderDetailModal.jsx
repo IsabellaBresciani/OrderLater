@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext.jsx";
-import OrderSummary from "./OrderSummary.jsx";
+import OrderDetailView from "./OrderDetailView.jsx";
 import Button from "../Button.jsx";
 import getOrderById from "../../services/getOrderById.js";
 
@@ -55,7 +55,7 @@ const OrderDetailModal = ({ orderId, onClose }) => {
       tabIndex="-1"
       style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
     >
-      <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: "75vw" }}>
+      <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: "55vw" }}>
         <div className="modal-content border-0 p-4">
           <div className="modal-header border-0">
             <h5 className="modal-title">Order Detail</h5>
@@ -80,11 +80,24 @@ const OrderDetailModal = ({ orderId, onClose }) => {
               </p>
               <hr />
               <h6>Items</h6>
-              <OrderSummary items={order?.items || []} isReduced={false} />
+              <OrderDetailView items={order?.items || []} />
               <hr />
               <p><strong>Total:</strong> ${order?.total?.toFixed(2)}</p>
               <p><strong>Discount:</strong> ${order?.total_discount?.toFixed(2)}</p>
             </div>
+          )}
+          {order?.actions?.length > 0 && (
+            <>
+              <hr />
+              <h6>Available Actions</h6>
+              <div className="d-flex flex-wrap gap-2">
+                {order.actions.map((action, i) => (
+                  <span key={i} className="badge bg-secondary text-capitalize fs-6">
+                    {action.replace("_", " ")}
+                  </span>
+                ))}
+              </div>
+            </>
           )}
 
           <div className="modal-footer border-0">
