@@ -60,7 +60,7 @@ class OrderService {
         ));
 
         const newOrder = {};
-        newOrder.user = data.user_id;
+        newOrder.user = data.user.id;
         newOrder.items = order_items;
         newOrder.total = calculateTotalPrice(order_items);
         newOrder.total_discount = calculateTotalDiscount(order_items);
@@ -170,9 +170,10 @@ class OrderService {
         });
     }
 
-    notifyCreatedOrderToUser(order) {
+    notifyCreatedOrderToUser(order, user) {
         const templateSource = fs.readFileSync('src/templates/email/created_order_template.html', 'utf8');
         const template = handlebars.compile(templateSource);
+
 
         const emailData = {
             userName: user.first_name + ' ' + user.last_name || 'Usuario',
