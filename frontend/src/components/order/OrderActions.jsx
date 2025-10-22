@@ -15,7 +15,7 @@ const iconMap = {
   delete: { icon: "bi-trash", color: "#f10d0dff" },
 };
 
-const OrderActions = ({ actions, orderId, refreshOrders }) => {
+const OrderActions = ({ actions, orderId, refreshOrders, hideDetailAction = false }) => {
   if (!actions || actions.length === 0) return null;
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -23,8 +23,13 @@ const OrderActions = ({ actions, orderId, refreshOrders }) => {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const { authToken } = useContext(AuthContext);
 
+  const filteredActions = hideDetailAction 
+    ? actions.filter(action => action !== "view_details")
+    : actions;
+
+  if (filteredActions.length === 0) return null;
+
   const handleActionClick = (action) => {
-    // Si es ver detalle, abrimos el modal directamente
     if (action === "view_details") {
       if (!orderId) {
         console.warn("⚠️ No orderId provided, cannot open detail modal");
@@ -36,7 +41,6 @@ const OrderActions = ({ actions, orderId, refreshOrders }) => {
       return;
     }
 
-    // Para otras acciones mostramos el modal de confirmación
     setCurrentAction({
       name: action,
       ...(iconMap[action] || { icon: "bi-question" }),
@@ -63,6 +67,14 @@ const OrderActions = ({ actions, orderId, refreshOrders }) => {
         case "cancel":
           response = await cancelOrder(orderId, authToken);
           Toast({ icon: "warning", title: response?.message || "Order cancelled successfully" });
+          break;
+
+        case "approve":
+          Toast({ icon: "info", title: "This functionality has not been developed yet" });
+          break;
+
+        case "reject":
+          Toast({ icon: "info", title: "This functionality has not been developed yet" });
           break;
 
         default:
@@ -102,7 +114,7 @@ const OrderActions = ({ actions, orderId, refreshOrders }) => {
   return (
     <>
       <div className="d-flex flex-wrap justify-content-center gap-2">
-        {actions.map((action) => {
+        {filteredActions.map((action) => {
           const { icon, color } = iconMap[action] || {
             icon: "bi-question",
             color: "#6c757d",
@@ -130,7 +142,6 @@ const OrderActions = ({ actions, orderId, refreshOrders }) => {
         })}
       </div>
 
-      {/* Modal de confirmación */}
       {modalOpen && (
         <div
           className="modal show d-block"
@@ -163,10 +174,11 @@ const OrderActions = ({ actions, orderId, refreshOrders }) => {
         </div>
       )}
 
-      {/* Modal de detalle */}
       {showDetailModal && (
         <OrderDetailModal
           orderId={orderId}
+          actions={actions}
+          refreshOrders={refreshOrders}
           onClose={() => setShowDetailModal(false)}
         />
       )}
