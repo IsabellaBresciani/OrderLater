@@ -2,7 +2,9 @@ const Order = require('../models/Order.js');
 
 class OrderDAO {
     getOrderById(id) {
-        return Order.findById(id);
+        return Order.findById(id)
+            .populate({ path: 'shop', select: 'name' })
+            .populate({ path: 'user', select: 'email first_name last_name' });
     }
 
     getOrdersByUserId(userId) {
