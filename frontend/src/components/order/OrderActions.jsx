@@ -3,6 +3,7 @@ import Button from "../Button.jsx";
 import { AuthContext } from "../../context/AuthContext.jsx";
 import { payOrder, cancelOrder } from "../../services/OrderActions.js";
 import Toast from "../../utils/Toast.js";
+import OrderDetailModal from "./OrderDetailModal.jsx";
 
 const iconMap = {
   view_details: { icon: "bi-eye", color: "#6c757d" },
@@ -19,9 +20,23 @@ const OrderActions = ({ actions, orderId, refreshOrders }) => {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const { authToken } = useContext(AuthContext);
 
   const handleActionClick = (action) => {
+    // Si es ver detalle, abrimos el modal directamente
+    if (action === "view_details") {
+      if (!orderId) {
+        console.warn("⚠️ No orderId provided, cannot open detail modal");
+        Toast({ icon: "error", title: "No se pudo abrir el detalle de la orden" });
+        return;
+      }
+      console.log("🟢 Abriendo modal de detalle para orderId:", orderId);
+      setShowDetailModal(true);
+      return;
+    }
+
+    // Para otras acciones mostramos el modal de confirmación
     setCurrentAction({
       name: action,
       ...(iconMap[action] || { icon: "bi-question" }),
@@ -37,49 +52,30 @@ const OrderActions = ({ actions, orderId, refreshOrders }) => {
   const handleConfirm = async () => {
     try {
       if (!currentAction) return;
-
       let response;
 
       switch (currentAction.name) {
         case "pay":
           response = await payOrder(orderId, authToken);
-          Toast({
-            icon: "success",
-            title: response?.message || "Order paid successfully",
-          });
+          Toast({ icon: "success", title: response?.message || "Order paid successfully" });
           break;
 
         case "cancel":
           response = await cancelOrder(orderId, authToken);
-          Toast({
-            icon: "warning",
-            title: response?.message || "Order cancelled successfully",
-          });
-          break;
-
-        case "view_details":
-          Toast({
-            icon: "info",
-            title: "Order details feature coming soon",
-          });
+          Toast({ icon: "warning", title: response?.message || "Order cancelled successfully" });
           break;
 
         default:
           Toast({ icon: "info", title: "Action not implemented yet" });
       }
 
-      // 🔄 Actualiza las órdenes sin reload
       if (refreshOrders) await refreshOrders();
-
     } catch (error) {
       console.error("Order action error:", error);
-
       const status = error.response?.status;
       const msg =
         error.response?.data?.message ||
-        (status === 500
-          ? "Server error: please try again later."
-          : "Error performing action");
+        (status === 500 ? "Server error: please try again later." : "Error performing action");
 
       Toast({ icon: "error", title: "Error", text: msg });
     } finally {
@@ -88,15 +84,12 @@ const OrderActions = ({ actions, orderId, refreshOrders }) => {
     }
   };
 
-  const confirmVariant = (() => {
-    if (["reject", "delete", "cancel"].includes(currentAction?.name)) {
-      return "danger";
-    }
-    if (["approve"].includes(currentAction?.name)) {
-      return "success";
-    }
-    return "primary";
-  })();
+  const confirmVariant =
+    ["reject", "delete", "cancel"].includes(currentAction?.name)
+      ? "danger"
+      : ["approve"].includes(currentAction?.name)
+      ? "success"
+      : "primary";
 
   const customButtonStyle =
     currentAction?.name === "approve"
@@ -128,12 +121,8 @@ const OrderActions = ({ actions, orderId, refreshOrders }) => {
                 transition: "transform 0.1s ease-in-out",
               }}
               title={action.replace("_", " ")}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.transform = "scale(1.1)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.transform = "scale(1)")
-              }
+              onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
+              onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
             >
               <i className={`bi ${icon}`} style={{ fontSize: "1.1rem" }}></i>
             </button>
@@ -141,6 +130,7 @@ const OrderActions = ({ actions, orderId, refreshOrders }) => {
         })}
       </div>
 
+      {/* Modal de confirmación */}
       {modalOpen && (
         <div
           className="modal show d-block"
@@ -171,6 +161,14 @@ const OrderActions = ({ actions, orderId, refreshOrders }) => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modal de detalle */}
+      {showDetailModal && (
+        <OrderDetailModal
+          orderId={orderId}
+          onClose={() => setShowDetailModal(false)}
+        />
       )}
     </>
   );
