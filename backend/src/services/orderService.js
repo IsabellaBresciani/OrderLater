@@ -36,7 +36,7 @@ class OrderService {
 
         const normalizedItems = order.items.map(item => ({
             ...item._doc,
-            price: item.unit_price 
+            price: item.unit_price
         }));
 
         return {
@@ -44,7 +44,6 @@ class OrderService {
             items: normalizedItems
         };
     }
-
 
     createOrder = async (data) => {
         if (!data.shop_id) throw new BadRequestException('Shop ID is required');
