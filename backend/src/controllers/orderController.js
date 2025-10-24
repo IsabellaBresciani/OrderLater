@@ -36,14 +36,22 @@ class OrderController {
     };
 
     createOrder = async (request, response) => {
-        const id = request.userId;
+        const id = request.user.userId;
+
         const email = request.user.email;
         const first_name = request.user.first_name;
         const last_name = request.user.last_name;
+        const products = request.body.products
+        const shop_id = request.body.shop_id
+        const deliver_date = request.body.deliver_date
+
         const dto = {
-            ...request.body,
-            user: { id, email, first_name, last_name }
+            user: { id, email, first_name, last_name },
+            products,
+            shop_id,
+            deliver_date
         }
+
         const order = await this.orderService.createOrder(dto)
 
         return response
