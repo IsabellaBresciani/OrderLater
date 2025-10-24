@@ -34,15 +34,7 @@ class OrderService {
 
         if (!order) throw new NotFoundException('No order found with this ID');
 
-        const normalizedItems = order.items.map(item => ({
-            ...item._doc,
-            price: item.unit_price
-        }));
-
-        return {
-            ...order._doc,
-            items: normalizedItems
-        };
+        return order;
     }
 
     createOrder = async (data) => {
