@@ -83,7 +83,11 @@ const OrdersTable = ({ orders }) => {
                   </span>
                 </td>
                 <td style={{ padding: "0.75rem" }}>
-                  <OrderActions actions={order.actions} />
+                  <OrderActions
+                    actions={order.actions}
+                    orderId={order._id || order.id}
+                    refreshOrders={null}
+                  />
                 </td>
               </tr>
             );

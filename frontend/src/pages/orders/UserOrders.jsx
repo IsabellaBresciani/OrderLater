@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import UserOrdersTable from "../../components/order/UserOrdersTable.jsx";
 import getUserOrders from "../../services/getUserOrders.js";
 import { AuthContext } from "../../context/AuthContext.jsx";
-import { toast } from "react-toastify";
+import Toast from "../../utils/Toast.js";
 
 const UserOrders = () => {
   const { currentUser, authToken } = useContext(AuthContext);
@@ -11,13 +11,27 @@ const UserOrders = () => {
 
   const fetchOrders = async () => {
     try {
-      if (!currentUser?.id) return;
+      console.log("Current user:", currentUser);
+      console.log("Auth token:", authToken ? "exists" : "missing");
+      
+      if (!currentUser?.id) {
+        console.warn("No user ID available");
+        setLoading(false);
+        return;
+      }
+      
       setLoading(true);
       const data = await getUserOrders(currentUser.id, authToken);
-      setOrders(data);
+      console.log("Orders fetched:", data);
+      setOrders(data || []);
     } catch (error) {
       console.error("Error fetching orders:", error);
-      toast.error("Error fetching your orders");
+      Toast({ 
+        icon: "error", 
+        title: "Error fetching your orders",
+        text: error.response?.data?.message || error.message 
+      });
+      setOrders([]);
     } finally {
       setLoading(false);
     }
@@ -25,7 +39,17 @@ const UserOrders = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, [currentUser, authToken]);
+  }, [currentUser?.id, authToken]);
+
+  if (!currentUser) {
+    return (
+      <div className="container mt-5">
+        <div className="alert alert-warning text-center">
+          Please log in to view your orders.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mt-5">
