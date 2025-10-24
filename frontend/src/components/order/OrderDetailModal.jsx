@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext.jsx";
-import OrderDetailView from "./OrderDetailView.jsx";
+import OrderDetailView from "./OrderDetailItems.jsx";
 import Button from "../Button.jsx";
 import getOrderById from "../../services/getOrderById.js";
 import OrderActions from "./OrderActions.jsx";
@@ -65,7 +65,7 @@ const OrderDetailModal = ({ orderId, actions, refreshOrders, onClose }) => {
       tabIndex="-1"
       style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
     >
-      <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: "55vw", maxHeight: "60vh" }}>
+      <div className="modal-dialog modal-dialog-centered pt-5" style={{ maxWidth: "55vw", maxHeight: "60vh" }}>
         <div className="modal-content border-0 p-4">
           <div className="modal-header border-0">
             <h5 className="modal-title w-100 text-center fw-bold">Order Detail</h5>
@@ -78,10 +78,9 @@ const OrderDetailModal = ({ orderId, actions, refreshOrders, onClose }) => {
             </div>
           ) : (
             <div className="modal-body text-start">
-              <p><strong>Order ID:</strong> {order?._id}</p>
-              <p><strong>Status:</strong> {order?.state}</p>
               <p><strong>Shop:</strong> {order?.shop?.name || "N/A"}</p>
               <p><strong>User:</strong> {order?.user?.email || "N/A"}</p>
+              <p><strong>Status:</strong> {order?.state}</p>
               <p>
                 <strong>Order date:</strong>{" "}
                 {order?.createdAt
