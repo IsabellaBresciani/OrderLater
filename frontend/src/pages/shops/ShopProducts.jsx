@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import styled from 'styled-components'; // Import styled-components
+import styled from 'styled-components';
 import productService from '../../services/productService';
 import ProductCard from '../../components/products/ProductCard';
 import Toast from '../../utils/Toast';
@@ -94,6 +94,9 @@ const ShopProducts = () => {
   const [error, setError] = useState(null);
   const { shopId } = useParams();
 
+  const isBusinessOwner = currentUser && currentUser.role === 'business_owner';
+  const productColSize = isBusinessOwner ? 'col-lg-12' : 'col-lg-8';
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -122,7 +125,6 @@ const ShopProducts = () => {
 
   return (
     <StyledContainer>
-      {/* Top Search Bar */}
       <SearchWrapper>
         <div className="container-fluid">
           <SearchInputGroup>
@@ -136,8 +138,7 @@ const ShopProducts = () => {
 
       <MainContent className="container-fluid">
         <div className="row">
-          {/* Products List Column */}
-          <div className="col-lg-8 px-4">
+          <div className={`${productColSize} px-4`}>
             <h3 className="mb-4 fw-bold text-dark">All Products</h3>
             <ProductGrid>
 
@@ -207,12 +208,13 @@ const ShopProducts = () => {
             </ProductGrid>
           </div>
 
-          {/* Order Summary Column */}
-          <div className="col-lg-4 d-none d-lg-block">
-            <OrderWrapper>
-              <Order shopId={shopId} />
-            </OrderWrapper>
-          </div>
+          {!isBusinessOwner && (
+            <div className="col-lg-4 d-none d-lg-block">
+              <OrderWrapper>
+                <Order shopId={shopId} />
+              </OrderWrapper>
+            </div>
+          )}
         </div>
       </MainContent>
     </StyledContainer>
