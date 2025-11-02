@@ -5,7 +5,7 @@ const NotFoundException = require('../exceptions/NotFoundException.js');
 const userDao = require('../daos/userDao');
 require('dotenv').config();
 
-const validRoles = ['admin', 'business_owner', 'user'];
+const validRoles = ['business_owner', 'user'];
 
 class AuthService {
     
