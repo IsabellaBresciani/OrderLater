@@ -14,10 +14,9 @@ function RegisterForm() {
     email: '',
   password: '',
   confirmPassword: '',
-  role: 'client', // default role
+  role: 'client', 
   });
 
-  // 2. Función de validación del lado del cliente
   const validateForm = () => {
   const { first_name, last_name, email, password, confirmPassword } = formData;
     if (!first_name || !last_name || !email || !password) {
@@ -74,7 +73,6 @@ function RegisterForm() {
           <input type="text" className="form-control" style={inputStyle} placeholder="Nombre" name='first_name' value={formData.first_name} onChange={handleChange} required/>
           <input type="text" className="form-control" style={inputStyle} placeholder="Apellido" name='last_name' value={formData.last_name} onChange={handleChange} required/>
       </div>
-      {/* Role dropdown (ddl) */}
       <div className="d-flex gap-2 mb-3">
         <label htmlFor="role" className="visually-hidden">Rol</label>
         <select id="role" name="role" className="form-select" value={formData.role} onChange={handleChange} aria-label="Selecciona rol" style={{ borderRadius: '12px' }}>
