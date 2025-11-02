@@ -76,7 +76,7 @@ function RegisterForm() {
       <div className="d-flex gap-2 mb-3">
         <label htmlFor="role" className="visually-hidden">Rol</label>
         <select id="role" name="role" className="form-select" value={formData.role} onChange={handleChange} aria-label="Selecciona rol" style={{ borderRadius: '12px' }}>
-          <option value="client">Client</option>
+          <option value="user">User</option>
           <option value="business_owner">Business Owner</option>
         </select>
       </div>
