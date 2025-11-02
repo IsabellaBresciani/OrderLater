@@ -14,7 +14,7 @@ function RegisterForm() {
     email: '',
   password: '',
   confirmPassword: '',
-  role: 'client', 
+  role: 'user', 
   });
 
   const validateForm = () => {
