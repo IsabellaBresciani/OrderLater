@@ -45,7 +45,7 @@ function RegisterForm() {
       await registerService(registerData);
       Toast({ icon: 'success', title: 'Usuario Registrado', text: 'Se ha creado tu cuenta con éxito. Ahora puedes iniciar sesión.' });
       // Opcional: limpiar el formulario o redirigir
-  setFormData({ first_name: '', last_name: '', email: '', password: '', confirmPassword: '', role: 'client' });
+  setFormData({ first_name: '', last_name: '', email: '', password: '', confirmPassword: '', role: 'user' });
     } catch (error) {
       // 4. Muestra el error específico del backend
       Toast({ icon: 'error', title: 'Error en el Registro', text: error.message || 'Ha ocurrido un error inesperado.' });
