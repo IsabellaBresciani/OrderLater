@@ -18,7 +18,7 @@ class OrderService {
     getOrdersByUserId = async (userId, userIdFromToken) => {
         if (!userId) throw new BadRequestException('User ID is required');
 
-        if (userId !== userIdFromToken ) {
+        if (userId !== userIdFromToken) {
             throw new ForbiddenException('You are not authorized to view these orders');
         }
 
@@ -28,20 +28,20 @@ class OrderService {
 
         return ordersWithActions || [];
     }
-    
+
     getOrderById = async (id) => {
-        const order = await orderDAO.findOrderById(id);
-    
+        const order = await orderDAO.getOrderById(id);
+
         if (!order) throw new NotFoundException('No order found with this ID');
-    
+
         return order;
     }
 
     createOrder = async (data) => {
         if (!data.shop_id) throw new BadRequestException('Shop ID is required');
-       
+
         await this.shopService.getShopById(data.shop_id)
-       
+
         const order_items = await Promise.all(
             data.products.map(
                 async item => {
@@ -56,11 +56,11 @@ class OrderService {
                         subtotalBeforeDiscount: item.quantity * product.unit_price,
                         clarification: item.clarification || ''
                     };
-                }    
-        ));
+                }
+            ));
 
         const newOrder = {};
-        newOrder.user = data.user_id;
+        newOrder.user = data.user.id;
         newOrder.items = order_items;
         newOrder.total = calculateTotalPrice(order_items);
         newOrder.total_discount = calculateTotalDiscount(order_items);
@@ -70,22 +70,22 @@ class OrderService {
         const createdOrder = await orderDAO.createOrder(newOrder);
 
         this.notifyCreatedOrderToUser(newOrder, data.user);
-        
+
         return createdOrder;
     };
-  
+
     payOrder = async (id, userIdFromToken) => {
         if (!id) throw new BadRequestException('Order ID is required');
 
         const order = await orderDAO.getOrderById(id);
-        
+
         if (!order) throw new NotFoundException('Orders not found for the given user ID');
 
         if (order.user._id.toString() !== userIdFromToken) {
             throw new ForbiddenException('You are not authorized to pay this order');
         }
 
-        if(order.state !== "waiting for payment") {
+        if (order.state !== "waiting for payment") {
             throw new BadRequestException(`Only orders in 'waiting for payment' state can be payed.`);
         }
 
@@ -100,7 +100,7 @@ class OrderService {
             body: "Le informamos que el pago de su orden en Order Later ha sido exitoso. Le informaremos sobre el estado de su compra cuando se aproxime la fecha de entrega.",
             order: payedOrder
         }
-        
+
         this.notifyUpdatedOrderState(notifyData);
 
 
@@ -111,14 +111,14 @@ class OrderService {
         if (!id) throw new BadRequestException('Order ID is required');
 
         const order = await orderDAO.getOrderById(id);
-        
+
         if (!order) throw new NotFoundException('Orders not found for the given user ID');
 
         if (order.user._id.toString() !== userIdFromToken) {
             throw new ForbiddenException('You are not authorized to cancel this order');
         }
 
-        if(order.state !== "waiting to approve" && order.state !== "waiting for payment") {
+        if (order.state !== "waiting to approve" && order.state !== "waiting for payment") {
             throw new BadRequestException(`Only orders in 'waiting for approve' or 'waiting for payment' state can be payed.`);
         }
 
@@ -170,9 +170,10 @@ class OrderService {
         });
     }
 
-    notifyCreatedOrderToUser(order) {
+    notifyCreatedOrderToUser(order, user) {
         const templateSource = fs.readFileSync('src/templates/email/created_order_template.html', 'utf8');
         const template = handlebars.compile(templateSource);
+
 
         const emailData = {
             userName: user.first_name + ' ' + user.last_name || 'Usuario',
@@ -223,15 +224,15 @@ function calculateTotalDiscount(items) {
     return items.reduce((total, item) => total + item.discount, 0);
 }
 
-function calculateSubtotal(unit_price, quantity, discount=0, advance_in_days=0, deliver_date) {
+function calculateSubtotal(unit_price, quantity, discount = 0, advance_in_days = 0, deliver_date) {
     let subtotal = (unit_price * quantity);
-    if(applyDiscount(advance_in_days, deliver_date)) {
+    if (applyDiscount(advance_in_days, deliver_date)) {
         subtotal = subtotal - subtotal * (discount / 100);
     }
     return subtotal;
 }
 
-function applyDiscount(advance_in_days, deliver_date){
+function applyDiscount(advance_in_days, deliver_date) {
     const currentDate = new Date();
     const deliverDate = new Date(deliver_date);
     const timeDiff = deliverDate.getTime() - currentDate.getTime();
@@ -261,7 +262,7 @@ function shopOwnerPopulateOrderActions(order) {
     if (order.state === 'rejected' || order.state === 'cancelled') {
         actions.push('delete');
     }
-    
+
     return {
         ...order._doc,
         actions: actions

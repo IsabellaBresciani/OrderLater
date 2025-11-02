@@ -3,7 +3,6 @@ import { Link, NavLink } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext'; // Adjust the path to your AuthContext file
 
 const NavBar = ({ role }) => {
-
   const { logout } = useContext(AuthContext);
 
   return (
