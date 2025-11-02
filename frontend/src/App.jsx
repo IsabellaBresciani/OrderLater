@@ -17,6 +17,7 @@ import ShopList from './pages/shops/ShopList.jsx';
 import ShopOrders from "./pages/orders/ShopOrders.jsx";
 import UserOrders from "./pages/orders/UserOrders.jsx";
 import ShopForm from './pages/shops/ShopForm.jsx';
+import ProductFormPage from './pages/products/ProductFormPage.jsx';
 
 function App() {
   return (
