@@ -26,12 +26,23 @@ const shopService = {
 
   async getShopsByOwner(user_id, token) {
     try {
-  
       const response = await axios.get(`${baseURL()}/api/shops/users/${user_id}`, {
       headers: { Authorization: `Bearer ${token}` },
       });
     
       return response.data.data;
+    } catch (error) {
+      throw error.response ? error.response.data : new Error('An unexpected error occurred');
+    }
+  }
+,
+
+  async createShop(shopData, authToken) {
+    try {
+      const response = await axios.post(`${baseURL()}/api/shops`, shopData, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      return response.data;
     } catch (error) {
       throw error.response ? error.response.data : new Error('An unexpected error occurred');
     }

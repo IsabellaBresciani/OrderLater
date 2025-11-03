@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useContext} from 'react';
-import { useParams } from 'react-router-dom';
-import styled from 'styled-components'; // Import styled-components
+import React, { useState, useEffect, useContext } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 import productService from '../../services/productService';
 import ProductCard from '../../components/products/ProductCard';
 import Toast from '../../utils/Toast';
 import Order from '../../components/order/Order';
+import { AuthContext } from "../../context/AuthContext";
 
 // --- Styled Components Definitions ---
 
@@ -86,10 +87,15 @@ const OrderWrapper = styled.div`
 // --- React Component ---
 
 const ShopProducts = () => {
+  const { currentUser } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { shopId } = useParams();
+
+  const isBusinessOwner = currentUser && currentUser.role === 'business_owner';
+  const productColSize = isBusinessOwner ? 'col-lg-12' : 'col-lg-8';
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -119,7 +125,6 @@ const ShopProducts = () => {
 
   return (
     <StyledContainer>
-      {/* Top Search Bar */}
       <SearchWrapper>
         <div className="container-fluid">
           <SearchInputGroup>
@@ -133,10 +138,64 @@ const ShopProducts = () => {
 
       <MainContent className="container-fluid">
         <div className="row">
-          {/* Products List Column */}
-          <div className="col-lg-8 px-4">
+          <div className={`${productColSize} px-4`}>
             <h3 className="mb-4 fw-bold text-dark">All Products</h3>
             <ProductGrid>
+
+              {currentUser && currentUser.role === 'business_owner' && (
+                <div className="mb-4 text-center p-2" onClick={() => navigate(`/shops/${shopId}/products/form`)}>
+                  <div
+                    style={{
+                      border: '2px dashed #030D59',
+                      borderRadius: '15px',
+                      overflow: 'hidden',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer',
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      backgroundColor: 'transparent',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = '#007bff';
+                      e.currentTarget.style.backgroundColor = '#e9f3ff';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = '#030D59';
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
+                  >
+                    <div style={{
+                      width: '100%',
+                      height: '200px',
+                      backgroundColor: 'rgba(3, 13, 89, 0.1)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                      <i className="bi bi-plus-circle-fill" style={{ fontSize: '3rem', color: '#030D59' }}></i>
+                    </div>
+                    <div style={{
+                      padding: '1.5rem',
+                      backgroundColor: '#ffffff',
+                      flexGrow: 1,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      textAlign: 'center',
+                    }}>
+                      <h5 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '0.5rem', color: '#030D59' }}>
+                        Crear Nuevo Producto
+                      </h5>
+                      <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: 0 }}>
+                        Click para agregar un producto
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )} 
+
               {products.length > 0 ? (
                 products.map(product => (
                   <ProductCard key={product.id} product={product} />
@@ -149,12 +208,13 @@ const ShopProducts = () => {
             </ProductGrid>
           </div>
 
-          {/* Order Summary Column */}
-          <div className="col-lg-4 d-none d-lg-block">
-            <OrderWrapper>
-              <Order shopId={shopId}/>
-            </OrderWrapper>
-          </div>
+          {!isBusinessOwner && (
+            <div className="col-lg-4 d-none d-lg-block">
+              <OrderWrapper>
+                <Order shopId={shopId} />
+              </OrderWrapper>
+            </div>
+          )}
         </div>
       </MainContent>
     </StyledContainer>
