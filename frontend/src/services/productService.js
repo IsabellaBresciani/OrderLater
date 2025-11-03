@@ -43,7 +43,8 @@ const productService = {
       throw error.response ?
       error.response.data : new Error('An unexpected error occurred');
     }
-  }
+  },
+
 };
 
 export default productService;
