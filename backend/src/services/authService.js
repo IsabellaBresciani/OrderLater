@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const BadRequestException = require('../exceptions/BadRequestException.js');
 const NotFoundException = require('../exceptions/NotFoundException.js');
+const ConflictException = require('../exceptions/ConflictException.js');
 const userDao = require('../daos/userDao');
 require('dotenv').config();
 
@@ -57,8 +58,8 @@ class AuthService {
 
         const userExist = await userDao.findUserByEmail(email);
         
-        if (userExist) 
-            throw { message: `Already exist user with email: ${data.email}`, statusCode: 409 };
+        if (userExist)
+            throw new ConflictException(`Already exist user with email: ${data.email}`);
     
         const hashedPassword = bcrypt.hashSync(password, 10);
         
