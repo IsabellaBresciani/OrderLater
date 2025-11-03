@@ -18,6 +18,18 @@ const productService = {
     } catch (error) {
       throw error.response ? error.response.data : new Error('An unexpected error occurred');
     }
+  },
+
+  async createProduct(productData, authToken) { 
+    try {
+      const response = await axios.post(`${baseURL()}/api/products`, productData, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response ?
+      error.response.data : new Error('An unexpected error occurred');
+    }
   }
 };
 

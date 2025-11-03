@@ -12,13 +12,13 @@ function RegisterForm() {
     first_name: '',
     last_name: '',
     email: '',
-    password: '',
-    confirmPassword: '',
+  password: '',
+  confirmPassword: '',
+  role: 'user', 
   });
 
-  // 2. Función de validación del lado del cliente
   const validateForm = () => {
-    const { first_name, last_name, email, password, confirmPassword } = formData;
+  const { first_name, last_name, email, password, confirmPassword } = formData;
     if (!first_name || !last_name || !email || !password) {
       Toast({ icon: 'warning', title: 'Campos Incompletos', text: 'Por favor, rellena todos los campos obligatorios.' });
       return false;
@@ -36,16 +36,16 @@ function RegisterForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return; // 3. Ejecuta la validación antes de enviar
+    if (!validateForm()) return; 
 
     setLoading(true);
     try {
       // Prepara los datos para el backend (sin confirmPassword)
-      const { confirmPassword, ...registerData } = formData;
+  const { confirmPassword, ...registerData } = formData;
       await registerService(registerData);
       Toast({ icon: 'success', title: 'Usuario Registrado', text: 'Se ha creado tu cuenta con éxito. Ahora puedes iniciar sesión.' });
       // Opcional: limpiar el formulario o redirigir
-      setFormData({ first_name: '', last_name: '', email: '', password: '', confirmPassword: '' });
+  setFormData({ first_name: '', last_name: '', email: '', password: '', confirmPassword: '', role: 'user' });
     } catch (error) {
       // 4. Muestra el error específico del backend
       Toast({ icon: 'error', title: 'Error en el Registro', text: error.message || 'Ha ocurrido un error inesperado.' });
@@ -68,11 +68,17 @@ function RegisterForm() {
         <p className="text-muted mb-1" style={{ fontSize: '0.9rem' }}>EMPECEMOS</p>
         <h2 className="mb-1" style={{ fontSize: '2rem' }}>Crear Cuenta</h2>
       </div>
-      
-      {/* ... (el resto del JSX de tus inputs es correcto) ... */}
+    
       <div className="d-flex gap-2 mb-3">
           <input type="text" className="form-control" style={inputStyle} placeholder="Nombre" name='first_name' value={formData.first_name} onChange={handleChange} required/>
           <input type="text" className="form-control" style={inputStyle} placeholder="Apellido" name='last_name' value={formData.last_name} onChange={handleChange} required/>
+      </div>
+      <div className="d-flex gap-2 mb-3">
+        <label htmlFor="role" className="visually-hidden">Rol</label>
+        <select id="role" name="role" className="form-select" value={formData.role} onChange={handleChange} aria-label="Selecciona rol" style={{ borderRadius: '12px' }}>
+          <option value="user">User</option>
+          <option value="business_owner">Business Owner</option>
+        </select>
       </div>
       <div className="d-flex gap-2 mb-3">
           <input type="email" className="form-control" style={inputStyle} placeholder="Correo electrónico" name='email' value={formData.email} onChange={handleChange} required/>
@@ -83,16 +89,13 @@ function RegisterForm() {
       </div>
       
       <button type="submit" className="btn" style={buttonStyle} disabled={loading}>
-        {/* 5. Muestra un spinner o texto diferente cuando está cargando */}
         {loading ? 'REGISTRANDO...' : 'REGISTRARSE'}
       </button>
 
       <div className="text-center mt-2">
         <span className="text-muted" style={{ fontSize: '0.8rem' }}>¿Ya eres miembro? </span>
-        {/* 6. Usa Link para la navegación interna */}
         <Link to="/login" className="text-decoration-none" style={{ fontSize: '0.8rem' }}>INICIA SESIÓN</Link>
       </div>
-      {/* ... (resto del JSX) ... */}
     </form>
   );
 }
