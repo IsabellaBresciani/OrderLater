@@ -13,6 +13,6 @@ router.get('/shops/:id', authMiddleware, asyncHandler(OrderController.getShopOrd
 router.post('/', asyncHandler(OrderController.createOrder));
 router.patch('/pay/:id', authMiddleware, asyncHandler(OrderController.payOrder));
 router.patch('/cancel/:id', authMiddleware, asyncHandler(OrderController.cancelOrder));
-router.patch('/accept/:id', authMiddleware, asyncHandler(OrderController.acceptOrder));
+router.patch('/approve/:id', authMiddleware, asyncHandler(OrderController.acceptOrder));
 
 module.exports = router;
