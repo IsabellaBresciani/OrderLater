@@ -1,6 +1,7 @@
 const BadRequestException = require('../exceptions/BadRequestException');
 const orderService = require('../services/orderService'); 
 const Actions = require('../constants/Actions.js');
+const { request } = require('express');
 
 class OrderController {
     constructor(orderService) {
@@ -105,6 +106,18 @@ class OrderController {
         .json({ 
             status: 'Success',
             message: 'Orders successfully retrieved',
+            data: orders
+        });
+    }
+
+    rejectOrder = async (request, response) => {
+        const { order_id } = request.params;
+        
+        return response
+        .status(200)
+        .json({ 
+            status: 'Success',
+            message: 'Order successfully rejected',
             data: orders
         });
     }
