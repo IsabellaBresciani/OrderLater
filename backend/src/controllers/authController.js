@@ -33,11 +33,11 @@ class AuthController {
 
     register = async (request, response) => {
 
-        const { first_name, last_name, email, password } = request.body;
+        const { first_name, last_name, email, password, role } = request.body;
 
         if (!email || !password) throw new BadRequestException('Email and password required');
 
-        const data = { email, password, first_name, last_name };
+        const data = { email, password, first_name, last_name, role };
 
         await this.authService.registerUser(data);
         
