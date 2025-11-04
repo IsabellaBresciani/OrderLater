@@ -111,10 +111,13 @@ class OrderController {
     }
 
     rejectOrder = async (request, response) => {
-        const { id } = request.params;
+        const order_id = request.params.id;
         const user_id = request.user.userId;
 
-        await this.orderService.rejectOrder(id, user_id);
+         if (!order_id) 
+            throw new BadRequestException('Order ID is required');
+
+        await this.orderService.rejectOrder(order_id, user_id);
         
         return response
         .status(200)
