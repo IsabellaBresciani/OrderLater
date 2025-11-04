@@ -111,17 +111,16 @@ class OrderController {
     }
 
     rejectOrder = async (request, response) => {
-        const { order_id } = request.params;
+        const { id } = request.params;
         const user_id = request.user.userId;
 
-        await this.orderService.rejectOrder(order_id, user_id);
+        await this.orderService.rejectOrder(id, user_id);
         
         return response
         .status(200)
         .json({ 
             status: 'Success',
-            message: 'Order successfully rejected',
-            data: orders
+            message: 'Order successfully rejected'
         });
     }
 }
