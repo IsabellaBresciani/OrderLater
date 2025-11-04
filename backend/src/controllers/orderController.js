@@ -95,7 +95,7 @@ class OrderController {
         const user_id = request.user.userId;
 
         if (!shop_id) 
-            throw new BadRequestException('Shop ID is required');
+            throw new BadRequestException('Order ID is required');
         
         const orders = await this.orderService.getShopOrders(shop_id, user_id);
 
@@ -109,8 +109,11 @@ class OrderController {
     }
 
     acceptOrder = async (request, response) => {
-        const { id } = request.params;
+        const order_id  = request.params.id;
         const user_id = request.user.userId;
+
+        if (!order_id) 
+            throw new BadRequestException('Shop ID is required');
 
         await this.orderService.acceptOrder(id, user_id);
         
