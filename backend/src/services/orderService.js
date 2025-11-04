@@ -1,12 +1,12 @@
+const fs = require('fs');
+const NotFoundException = require('../exceptions/NotFoundException');
+const handlebars = require('handlebars');
+const BadRequestException = require('../exceptions/BadRequestException');
+const ForbiddenException = require('../exceptions/ForbiddenException');
 const productService = require('./productService');
 const emailService = require('./emailService');
 const shopService = require('./shopService');
 const orderDAO = require('../daos/OrderDaos')
-const NotFoundException = require('../exceptions/NotFoundException');
-const fs = require('fs');
-const handlebars = require('handlebars');
-const BadRequestException = require('../exceptions/BadRequestException');
-const ForbiddenException = require('../exceptions/ForbiddenException');
 
 class OrderService {
     constructor(productService, emailService, shopService) {
@@ -213,6 +213,28 @@ class OrderService {
         const orders = await orderDAO.searchShops(serach_filter, fields, populateFields);
 
         return orders.map(shopOwnerPopulateOrderActions);
+    }
+
+    acceptOrder = async (order_id, owner_id) => {
+        const order = await orderDAO.getOrderById(order_id);
+        if (!order) {
+            throw new NotFoundException('Orders not found for the given user ID');
+        }
+
+        const shop = order.shop;
+        if (!shop.checkOwner(shop, owner_id)) {
+            throw new ForbiddenException('User is not the shop owner that belongs the order');
+        }
+
+        if (order.state != 'waiting to approve') {
+            throw new BadRequestException('Order state must be waiting to approve')
+        }
+
+        const stateUpdated = { 
+            state: 'waiting for payment'
+        };
+    
+        return orderDAO.updateOrder(order_id, stateUpdated);
     }
 }
 

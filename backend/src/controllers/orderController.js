@@ -1,6 +1,5 @@
 const BadRequestException = require('../exceptions/BadRequestException');
 const orderService = require('../services/orderService'); 
-const Actions = require('../constants/Actions.js');
 
 class OrderController {
     constructor(orderService) {
@@ -106,6 +105,20 @@ class OrderController {
             status: 'Success',
             message: 'Orders successfully retrieved',
             data: orders
+        });
+    }
+
+    acceptOrder = async (request, response) => {
+        const { id } = request.params;
+        const user_id = request.user.userId;
+
+        await this.orderService.acceptOrder(id, user_id);
+        
+        return response
+        .status(200)
+        .json({ 
+            status: 'Success',
+            message: 'Order successfully accepted'
         });
     }
 }
