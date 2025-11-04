@@ -113,15 +113,15 @@ class OrderController {
         const user_id = request.user.userId;
 
         if (!order_id) 
-            throw new BadRequestException('Shop ID is required');
+            throw new BadRequestException('Order ID is required');
 
-        await this.orderService.acceptOrder(id, user_id);
+        await this.orderService.acceptOrder(order_id, user_id);
         
         return response
         .status(200)
         .json({ 
             status: 'Success',
-            message: 'Order successfully accepted'
+            message: 'Order successfully approved'
         });
     }
 }
