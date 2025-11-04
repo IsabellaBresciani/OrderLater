@@ -18,6 +18,7 @@ import ShopOrders from "./pages/orders/ShopOrders.jsx";
 import UserOrders from "./pages/orders/UserOrders.jsx";
 import ShopForm from './pages/shops/ShopForm.jsx';
 import ProductFormPage from './pages/products/ProductFormPage.jsx';
+import ProductEditPage from './pages/products/ProductEditPage.jsx';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
           <Route path="/shops" element={<PrivateRoute><ShopList /></PrivateRoute>} />
           <Route path="/shops/:shopId/products/form" element={<PrivateRoute requiredRoles={["business_owner"]}><ProductFormPage /></PrivateRoute>} /> 
+          <Route path="/shops/:shopId/products/:productId/edit" element={<PrivateRoute requiredRoles={["business_owner"]}><ProductEditPage /></PrivateRoute>} />
           <Route path="/shops/form" element={<PrivateRoute requiredRoles={["business_owner"]}><ShopForm /></PrivateRoute>} />
           <Route path="/shops/:shopId/products" element={ <PrivateRoute> <ShopProducts /></PrivateRoute>} />
           <Route path="/shops/:shopId/order-checkout" element={<PrivateRoute>  <OrderCheckout />     </PrivateRoute>} />
