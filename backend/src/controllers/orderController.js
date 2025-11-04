@@ -112,6 +112,9 @@ class OrderController {
 
     rejectOrder = async (request, response) => {
         const { order_id } = request.params;
+        const user_id = request.user.userId;
+
+        await this.orderService.rejectOrder(order_id, user_id);
         
         return response
         .status(200)

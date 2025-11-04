@@ -214,6 +214,28 @@ class OrderService {
 
         return orders.map(shopOwnerPopulateOrderActions);
     }
+
+     rejectOrder = async (order_id, owner_id) => {
+        const order = await orderDAO.getOrderById(order_id);
+        if (!order) {
+            throw new NotFoundException('Orders not found for the given user ID');
+        }
+
+        const shop = order.shop;
+        if (!shop.checkOwner(shop, owner_id)) {
+            throw new ForbiddenException('User is not the shop owner that belongs the order');
+        }
+
+        if (order.state != 'waiting to approve') {
+            throw new BadRequestException('Order state must be waiting to approve')
+        }
+
+        const stateUpdated = { 
+            state: 'rejected'
+        };
+    
+        return orderDAO.updateOrder(order_id, stateUpdated);
+    }
 }
 
 function calculateTotalPrice(items) {
