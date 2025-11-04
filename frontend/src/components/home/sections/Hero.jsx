@@ -1,5 +1,4 @@
 import React from "react";
-import "../styles/homepage.css";
 import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
