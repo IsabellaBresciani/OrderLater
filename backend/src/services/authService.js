@@ -1,9 +1,12 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const BadRequestException = require('../exceptions/BadRequestException.js');
-const userDao = require('../daos/userDao');
 const NotFoundException = require('../exceptions/NotFoundException.js');
+const ConflictException = require('../exceptions/ConflictException.js');
+const userDao = require('../daos/userDao');
 require('dotenv').config();
+
+const validRoles = ['business_owner', 'user'];
 
 class AuthService {
     
@@ -47,12 +50,16 @@ class AuthService {
 
     async registerUser(data) {
 
-        const { email, password, first_name, last_name} = data;
+        const { email, password, first_name, last_name, role } = data;
+
+        if (!checkUserRoleIsvalid) {
+            throw { message: `Role "${role}" is not valid. Must be one of the list: ${validRoles}` };
+        }
 
         const userExist = await userDao.findUserByEmail(email);
         
-        if (userExist) 
-            throw { message: `Already exist user with email: ${data.email}`, statusCode: 409 };
+        if (userExist)
+            throw new ConflictException(`Already exist user with email: ${data.email}`);
     
         const hashedPassword = bcrypt.hashSync(password, 10);
         
@@ -60,11 +67,16 @@ class AuthService {
             email: email, 
             password: hashedPassword ,
             first_name: first_name,
-            last_name: last_name
+            last_name: last_name,
+            role: role
         };
 
         return userDao.createUser(newUser);
     }
+}
+
+function checkUserRoleIsvalid(role) {
+    return validRoles.includes(role)
 }
 
 module.exports = new AuthService();

@@ -14,5 +14,6 @@ router.post('/', asyncHandler(OrderController.createOrder));
 router.patch('/pay/:id', authMiddleware, asyncHandler(OrderController.payOrder));
 router.patch('/cancel/:id', authMiddleware, asyncHandler(OrderController.cancelOrder));
 router.patch('/reject/:id', authMiddleware, asyncHandler(OrderController.rejectOrder));
+router.patch('/approve/:id', authMiddleware, asyncHandler(OrderController.acceptOrder));
 
 module.exports = router;
