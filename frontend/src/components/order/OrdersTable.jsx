@@ -1,7 +1,7 @@
 import React from "react";
 import OrderActions from "./OrderActions.jsx";
 
-const OrdersTable = ({ orders }) => {
+const OrdersTable = ({ orders, refreshOrders }) => {
   if (!orders || orders.length === 0)
     return <p className="text-center mt-4 text-muted">No orders found.</p>;
 
@@ -86,7 +86,7 @@ const OrdersTable = ({ orders }) => {
                   <OrderActions
                     actions={order.actions}
                     orderId={order._id || order.id}
-                    refreshOrders={null}
+                    refreshOrders={refreshOrders}
                   />
                 </td>
               </tr>

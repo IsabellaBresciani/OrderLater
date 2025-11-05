@@ -16,37 +16,37 @@ const ShopOrders = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
+  const fetchData = async () => {
+    try {
+      const ordersData = await getShopOrders(shopId, authToken);
+      setOrders(ordersData);
+
+      const shopRes = await axios.get(`${baseURL()}/api/shops`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+
+      const shopList = shopRes.data?.shops || [];
+      const currentShop = shopList.find((s) => s._id === shopId);
+
+      setShopName(currentShop ? currentShop.name : "Unnamed Shop");
+    } catch (error) {
+      console.error(error);
+      Toast({
+        icon: "error",
+        title: "Error",
+        text: "Unable to fetch shop or orders.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (currentUser.role !== "business_owner") {
       setShowModal(true);
       setLoading(false);
       return;
     }
-
-    const fetchData = async () => {
-      try {
-        const ordersData = await getShopOrders(shopId, authToken);
-        setOrders(ordersData);
-
-        const shopRes = await axios.get(`${baseURL()}/api/shops`, {
-          headers: { Authorization: `Bearer ${authToken}` },
-        });
-
-        const shopList = shopRes.data?.shops || [];
-        const currentShop = shopList.find((s) => s._id === shopId);
-
-        setShopName(currentShop ? currentShop.name : "Unnamed Shop");
-      } catch (error) {
-        console.error(error);
-        Toast({
-          icon: "error",
-          title: "Error",
-          text: "Unable to fetch shop or orders.",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
 
     fetchData();
   }, [shopId, authToken, currentUser]);
@@ -102,7 +102,10 @@ const ShopOrders = () => {
               <p className="mt-2">Loading orders...</p>
             </div>
           ) : (
-            <OrdersTable orders={orders} />
+            <OrdersTable 
+              orders={orders}
+              refreshOrders={fetchData}
+            />
           )}
         </>
       )}
