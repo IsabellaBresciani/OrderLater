@@ -174,7 +174,6 @@ class OrderService {
         const templateSource = fs.readFileSync('src/templates/email/created_order_template.html', 'utf8');
         const template = handlebars.compile(templateSource);
 
-
         const emailData = {
             userName: user.first_name + ' ' + user.last_name || 'Usuario',
             products: order.items.map(item => ({
