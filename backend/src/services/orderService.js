@@ -1,12 +1,12 @@
+const fs = require('fs');
+const NotFoundException = require('../exceptions/NotFoundException');
+const handlebars = require('handlebars');
+const BadRequestException = require('../exceptions/BadRequestException');
+const ForbiddenException = require('../exceptions/ForbiddenException');
 const productService = require('./productService');
 const emailService = require('./emailService');
 const shopService = require('./shopService');
 const orderDAO = require('../daos/OrderDaos')
-const NotFoundException = require('../exceptions/NotFoundException');
-const fs = require('fs');
-const handlebars = require('handlebars');
-const BadRequestException = require('../exceptions/BadRequestException');
-const ForbiddenException = require('../exceptions/ForbiddenException');
 
 class OrderService {
     constructor(productService, emailService, shopService) {
@@ -199,6 +199,35 @@ class OrderService {
         });
     }
 
+    notifyApprovedOrderToUser(order) {
+        const templateSource = fs.readFileSync('src/templates/email/approved_order_template.html', 'utf8');
+        const template = handlebars.compile(templateSource);
+
+        const user = order.user;
+        const emailData = {
+            userName: user.first_name + ' ' + user.last_name || 'Usuario',
+            products: order.items.map(item => ({
+                name: item.name,
+                quantity: item.quantity,
+                unit_price: item.unit_price,
+                subtotal: item.subtotal,
+                discount: item.discount,
+                subtotalBeforeDiscount: item.subtotalBeforeDiscount
+            })),
+            total: order.total.toFixed(2),
+            deliverDate: order.deliver_date,
+            year: new Date().getFullYear()
+        };
+
+        const htmlBody = template(emailData);
+
+        return this.emailService.sendEmail({
+            to: user.email,
+            subject: "Nueva Orden Creada",
+            body: htmlBody
+        });
+    }
+
     getShopOrders = async (shop_id, owner_id) => {
         const shop = await this.shopService.getShopById(shop_id);
 
@@ -213,6 +242,30 @@ class OrderService {
         const orders = await orderDAO.searchShops(serach_filter, fields, populateFields);
 
         return orders.map(shopOwnerPopulateOrderActions);
+    }
+
+    acceptOrder = async (order_id, owner_id) => {
+        const order = await orderDAO.getOrderById(order_id);
+        if (!order) {
+            throw new NotFoundException('Orders not found for the given user ID');
+        }
+
+        const shop = order.shop;
+        if (!shop.checkOwner(shop, owner_id)) {
+            throw new ForbiddenException('User is not the shop owner that belongs the order');
+        }
+
+        if (order.state != 'waiting to approve') {
+            throw new BadRequestException('Order state must be waiting to approve')
+        }
+
+        const stateUpdated = { 
+            state: 'waiting for payment'
+        };
+
+        this.notifyApprovedOrderToUser(order);
+
+        return orderDAO.updateOrder(order_id, stateUpdated);
     }
 }
 
