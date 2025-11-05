@@ -19,3 +19,23 @@ export const cancelOrder = async (orderId, token) => {
   );
   return response.data;
 };
+
+
+export const approveOrder = async (orderId, token) => {
+  const response = await axios.patch(
+    `${baseURL()}/api/orders/approve/${orderId}`,
+    {},
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return response.data;
+};
+
+
+export const rejectOrder = async (orderId, token) => {
+  const response = await axios.patch(
+    `${baseURL()}/api/orders/reject/${orderId}`,
+    {},
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return response.data;
+};

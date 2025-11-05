@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import Button from "../Button.jsx";
 import { AuthContext } from "../../context/AuthContext.jsx";
-import { payOrder, cancelOrder } from "../../services/OrderActions.js";
+import { payOrder, cancelOrder, approveOrder, rejectOrder } from "../../services/OrderActions.js";
 import Toast from "../../utils/Toast.js";
 import OrderDetailModal from "./OrderDetailModal.jsx";
 
@@ -23,7 +23,7 @@ const OrderActions = ({ actions, orderId, refreshOrders, hideDetailAction = fals
   const [showDetailModal, setShowDetailModal] = useState(false);
   const { authToken } = useContext(AuthContext);
 
-  const filteredActions = hideDetailAction 
+  const filteredActions = hideDetailAction
     ? actions.filter(action => action !== "view_details")
     : actions;
 
@@ -70,11 +70,13 @@ const OrderActions = ({ actions, orderId, refreshOrders, hideDetailAction = fals
           break;
 
         case "approve":
-          Toast({ icon: "info", title: "This functionality has not been developed yet" });
+          response = await approveOrder(orderId, authToken);
+          Toast({ icon: "success", title: response?.message || "Order approved successfully" });
           break;
 
         case "reject":
-          Toast({ icon: "info", title: "This functionality has not been developed yet" });
+          response = await rejectOrder(orderId, authToken);
+          Toast({ icon: "error", title: response?.message || "Order rejected successfully" });
           break;
 
         default:
@@ -100,8 +102,8 @@ const OrderActions = ({ actions, orderId, refreshOrders, hideDetailAction = fals
     ["reject", "delete", "cancel"].includes(currentAction?.name)
       ? "danger"
       : ["approve"].includes(currentAction?.name)
-      ? "success"
-      : "primary";
+        ? "success"
+        : "primary";
 
   const customButtonStyle =
     currentAction?.name === "approve"
