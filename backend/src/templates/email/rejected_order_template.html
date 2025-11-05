@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Orden Rechazada - Order Later</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    /* Reset */
+    body,table,td,a{-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}
+    table,td{mso-table-lspace:0pt;mso-table-rspace:0pt}
+    img{-ms-interpolation-mode:bicubic}
+
+    /* Base styles */
+    body{margin:0;padding:0;background-color:#f4f4f6;font-family:Arial,Helvetica,sans-serif;color:#333333}
+    .email-wrapper{width:100%;padding:20px 0}
+    .email-content{max-width:600px;margin:0 auto;background:#ffffff;border-radius:6px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.05)}
+    .email-header{background:#0d6efd;color:#ffffff;padding:20px;text-align:center}
+    .brand{font-size:20px;font-weight:700;letter-spacing:0.3px}
+    .email-body{padding:24px}
+    .greeting{font-size:18px;margin:0 0 8px}
+    .lead{color:#555;margin:0 0 16px;line-height:1.4}
+    .order-summary{width:100%;border-collapse:collapse;margin:16px 0}
+    .order-summary th{background:#f7f7fb;padding:10px;text-align:left;border-bottom:1px solid #e9e9ef;font-weight:600}
+    .order-summary td{padding:10px;border-bottom:1px solid #f1f1f4}
+    .product-name{font-weight:600;color:#111}
+    .muted{color:#6c757d;font-size:13px}
+    .total-row td{font-weight:700;padding-top:12px}
+    .notice{background:#fff3f2;border:1px solid #ffd6d1;color:#b02a37;padding:12px;border-radius:4px;margin:16px 0}
+    .cta{display:inline-block;padding:10px 16px;background:#0d6efd;color:#fff;text-decoration:none;border-radius:4px;margin-top:12px}
+    .footer{padding:16px 24px;background:#f8f9fb;color:#6c757d;font-size:13px;text-align:center;border-top:1px solid #eef0f4}
+    .small{font-size:12px;color:#9aa0a6}
+    @media only screen and (max-width:600px){
+      .email-content{margin:0 12px}
+    }
+  </style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="email-content">
+      <div class="email-header">
+        <div class="brand">Order Later</div>
+      </div>
+
+      <div class="email-body">
+        <p class="greeting">Hola {{userName}},</p>
+        <p class="lead">Lamentamos informarte que tu orden ha sido <strong>rechazada</strong>.</p>
+
+        <div class="notice">
+          La orden no podrá continuar el proceso de compra. Si tienes preguntas o deseas más información, por favor contacta con la tienda o con nuestro soporte.
+        </div>
+
+        <table class="order-summary" role="presentation" width="100%">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio unit.</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each products}}
+            <tr>
+              <td class="product-name">{{name}}</td>
+              <td>{{quantity}}</td>
+              <td class="muted">{{unit_price}}</td>
+              <td class="muted">{{subtotal}}</td>
+            </tr>
+            {{/each}}
+            <tr class="total-row">
+              <td colspan="3" style="text-align:right">Total</td>
+              <td>{{total}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="muted">Fecha prevista de entrega: <strong>{{deliverDate}}</strong></p>
+
+        <p class="muted">Si necesitas asistencia adicional, responde este correo o visita tu panel de órdenes en Order Later.</p>
+
+        <a href="#" class="cta">Ver mis órdenes</a>
+      </div>
+
+      <div class="footer">
+        <div>Order Later &copy; {{year}}</div>
+        <div class="small">Gracias por usar nuestro servicio</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

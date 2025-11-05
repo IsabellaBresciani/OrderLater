@@ -1,5 +1,5 @@
 const BadRequestException = require('../exceptions/BadRequestException');
-const orderService = require('../services/orderService'); 
+const orderService = require('../services/orderService');
 
 class OrderController {
     constructor(orderService) {
@@ -122,6 +122,23 @@ class OrderController {
         .json({ 
             status: 'Success',
             message: 'Order successfully approved'
+        });
+    }
+
+    rejectOrder = async (request, response) => {
+        const order_id = request.params.id;
+        const user_id = request.user.userId;
+
+        if (!order_id) 
+            throw new BadRequestException('Order ID is required');
+
+        await this.orderService.rejectOrder(order_id, user_id);
+
+        return response
+        .status(200)
+        .json({ 
+            status: 'Success',
+            message: 'Order successfully rejected'
         });
     }
 }
