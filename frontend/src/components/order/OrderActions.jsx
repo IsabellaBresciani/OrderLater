@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import Button from "../Button.jsx";
 import { AuthContext } from "../../context/AuthContext.jsx";
-import { payOrder, cancelOrder } from "../../services/OrderActions.js";
+import { payOrder, cancelOrder, approveOrder, rejectOrder } from "../../services/OrderActions.js";
 import Toast from "../../utils/Toast.js";
 import OrderDetailModal from "./OrderDetailModal.jsx";
 
@@ -10,25 +10,25 @@ const iconMap = {
   approve: { icon: "bi-check-lg", color: "#28a745" },
   reject: { icon: "bi-x-lg", color: "#dc3545" },
   pay: { icon: "bi-cash-coin", color: "#0d6efd" },
-  complete: { icon: "bi-truck", color: "#ffc107" },
+  complete: { icon: "bi-box-seam", color: "#ffc107" },
+  deliver: { icon: "bi-box-seam", color: "#ffc107" },
   cancel: { icon: "bi-x-octagon", color: "#FF0000" },
   delete: { icon: "bi-trash", color: "#f10d0dff" },
 };
 
 const OrderActions = ({ actions, orderId, refreshOrders, hideDetailAction = false }) => {
   if (!actions || actions.length === 0) return null;
-
   const [modalOpen, setModalOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const { authToken } = useContext(AuthContext);
 
-  const filteredActions = hideDetailAction 
-    ? actions.filter(action => action !== "view_details")
+  const filteredActions = hideDetailAction
+    ?
+    actions.filter(action => action !== "view_details")
     : actions;
 
   if (filteredActions.length === 0) return null;
-
   const handleActionClick = (action) => {
     if (action === "view_details") {
       if (!orderId) {
@@ -52,7 +52,6 @@ const OrderActions = ({ actions, orderId, refreshOrders, hideDetailAction = fals
     setModalOpen(false);
     setCurrentAction(null);
   };
-
   const handleConfirm = async () => {
     try {
       if (!currentAction) return;
@@ -63,24 +62,24 @@ const OrderActions = ({ actions, orderId, refreshOrders, hideDetailAction = fals
           response = await payOrder(orderId, authToken);
           Toast({ icon: "success", title: response?.message || "Order paid successfully" });
           break;
-
         case "cancel":
           response = await cancelOrder(orderId, authToken);
           Toast({ icon: "warning", title: response?.message || "Order cancelled successfully" });
           break;
-
         case "approve":
-          Toast({ icon: "info", title: "This functionality has not been developed yet" });
+          response = await approveOrder(orderId, authToken);
+          Toast({ icon: "success", title: response?.message || "Order approved successfully" });
           break;
-
         case "reject":
-          Toast({ icon: "info", title: "This functionality has not been developed yet" });
+          response = await rejectOrder(orderId, authToken);
+          Toast({ icon: "error", title: response?.message || "Order rejected successfully" });
           break;
-
+        case "deliver":
+          Toast({ icon: "info", title: "Deliver action not implemented in the service yet" });
+          break;
         default:
           Toast({ icon: "info", title: "Action not implemented yet" });
       }
-
       if (refreshOrders) await refreshOrders();
     } catch (error) {
       console.error("Order action error:", error);
@@ -88,7 +87,6 @@ const OrderActions = ({ actions, orderId, refreshOrders, hideDetailAction = fals
       const msg =
         error.response?.data?.message ||
         (status === 500 ? "Server error: please try again later." : "Error performing action");
-
       Toast({ icon: "error", title: "Error", text: msg });
     } finally {
       setModalOpen(false);
@@ -98,19 +96,19 @@ const OrderActions = ({ actions, orderId, refreshOrders, hideDetailAction = fals
 
   const confirmVariant =
     ["reject", "delete", "cancel"].includes(currentAction?.name)
-      ? "danger"
+      ?
+      "danger"
       : ["approve"].includes(currentAction?.name)
-      ? "success"
-      : "primary";
-
+        ?
+        "success"
+        : "primary";
   const customButtonStyle =
     currentAction?.name === "approve"
-      ? { backgroundColor: "#0ab432ff", border: "none", color: "#fff" }
+      ?
+      { backgroundColor: "#0ab432ff", border: "none", color: "#fff" }
       : {};
-
   const formattedAction = currentAction?.name?.replace("_", " ") || "";
   const actionIcon = currentAction?.icon || "bi-question";
-
   return (
     <>
       <div className="d-flex flex-wrap justify-content-center gap-2">
@@ -120,6 +118,7 @@ const OrderActions = ({ actions, orderId, refreshOrders, hideDetailAction = fals
             color: "#6c757d",
           };
           return (
+
             <button
               key={action}
               className="border-0 d-flex align-items-center justify-content-center"
@@ -127,12 +126,14 @@ const OrderActions = ({ actions, orderId, refreshOrders, hideDetailAction = fals
               style={{
                 width: "36px",
                 height: "36px",
+
                 borderRadius: "8px",
                 backgroundColor: color,
                 color: "#fff",
                 transition: "transform 0.1s ease-in-out",
               }}
               title={action.replace("_", " ")}
+
               onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
               onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
             >
@@ -150,23 +151,27 @@ const OrderActions = ({ actions, orderId, refreshOrders, hideDetailAction = fals
         >
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content border-0 text-center">
+
               <div className="modal-header border-0">
                 <h5 className="modal-title w-100">Confirm Action</h5>
               </div>
               <div className="modal-body">
                 <p>Are you sure you want to {formattedAction}?</p>
               </div>
+
               <div className="modal-footer border-0 justify-content-end gap-2">
                 <Button variant="secondary" onClick={handleCancel}>
                   Go Back
                 </Button>
                 <Button
+
                   variant={confirmVariant}
                   onClick={handleConfirm}
                   style={customButtonStyle}
                 >
                   <i className={`bi ${actionIcon} me-2`}></i>
                   Confirm
+
                 </Button>
               </div>
             </div>
@@ -178,6 +183,7 @@ const OrderActions = ({ actions, orderId, refreshOrders, hideDetailAction = fals
         <OrderDetailModal
           orderId={orderId}
           actions={actions}
+
           refreshOrders={refreshOrders}
           onClose={() => setShowDetailModal(false)}
         />
